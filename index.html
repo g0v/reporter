@@ -1,92 +1,311 @@
-<!doctype html>
-<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
-<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on http://github.com/jonrohan -->
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen"/>
-  <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-  <script type="text/javascript" src="javascripts/script.js"></script>
+<!DOCTYPE html>
+<html ng-app = "reporterApp">
 
-  <title>Reporter</title>
-  <meta name="description" content="公民記者證列印">
 
+
+<script src="javascripts/lib/jquery-1.10.2.js"></script>
+<script src="javascripts/lib/jquery-ui.js"></script>
+<script src="javascripts/lib/angular.min.js"></script>
+
+
+  <title>貼。印。前。當一位良心的公民記者。</title>
+
+
+
+  <meta charset=utf-8 />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://g0v.github.io/reporter/index.html" />
+    <meta property="og:title" content="貼。印。前。當一位良心的公民記者。" />
+    <meta property="og:image" content="https://fbexternal-a.akamaihd.net/safe_image.php?d=AQBESY-3V9fya5ke&w=398&h=208&url=https%3A%2F%2Fdchtm6r471mui.cloudfront.net%2Fhackpad.com_JqRmqeNceAT_p.66898_1395859056604_613-689.png&cfs=1&sx=0&sy=78&sw=601&sh=314" />
+
+  <meta name="description" content="貼。印。前。當一位良心的公民記者。">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+
+
+  <style type="text/css">
+
+
+  body {        /* A4 */
+    width: 208mm;
+  }
+
+  table#main {
+    width: 90%;
+    border-collapse: collapse;
+  }
+
+  #main td {
+    width: 50%;
+    text-align: center;
+    vertical-align: top;
+  }
+
+  #main td#r {
+    text-align: left;
+    vertical-align: middle;
+    padding: 5mm;
+  }
+
+
+  img.face {
+    width: 100%;
+  }
+
+  img.qr {
+    width: 20mm;
+    float: left;
+  }
+
+  #rt {
+    font-size: 120%;
+  }
+
+  #titleBar {
+    display: inline-block;
+    width: 101.5%;
+    color: #fff;
+    text-align: center;
+    font-size: 300%;
+
+    -webkit-box-shadow: 0px 9px 0px rgba(219,31,5,1), 0px 9px 25px rgba(0,0,0,.7);
+    -moz-box-shadow: 0px 9px 0px rgba(219,31,5,1), 0px 9px 25px rgba(0,0,0,.7);
+    box-shadow: inset 0 0 0 1000px black, 0px 3mm 0px rgba(219,31,5,1);
+
+    padding-top: 6mm;
+    padding-bottom: 6mm;
+
+    margin-top: -1mm;
+    margin-left: -4px;
+
+    margin-bottom: 6mm;
+  }
+
+/*
+  #redBar {
+    display: inline-block;
+    width: 100%;
+    height: 2mm;
+    box-shadow: inset 0 0 0 1000px red;
+
+  } */
+
+  table#in td#left {
+    text-align: left;
+  }
+
+  table#in td#right {
+    font-size: 200%;
+  }
+
+  #foot {
+    font-size: 120%;
+    font-weight: bold;
+  }
+
+
+  a#doPrint {
+    position: fixed;
+    bottom: 20%;
+    left: 40%;
+    z-index: 31;
+    top: 50%;
+    left: 25%;
+    margin-top: -15%;
+    margin-left: -5%;
+    width: 50%;
+    height: 10%;
+    text-decoration: none;
+    color: rgba(255,255,255,0.5);
+    background-color: rgba(219,87,5,0.5);
+    font-family: 'Yanone Kaffeesatz';
+    font-weight: 700;
+    font-size: 200%;
+    line-height: 200%;
+    cursor: pointer;
+    display: block; 
+    padding: 5px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+    -webkit-box-shadow: 0px 9px 0px rgba(219,31,5,.5), 0px 9px 25px rgba(0,0,0,.4);
+    -moz-box-shadow: 0px 9px 0px rgba(219,31,5,.5), 0px 9px 25px rgba(0,0,0,.4);
+    box-shadow: 0px 9px 0px rgba(219,31,5,.5), 0px 9px 25px rgba(0,0,0,.4);
+
+    text-align: center;
+  
+  -webkit-transition: all .1s ease;
+  -moz-transition: all .1s ease;
+  -ms-transition: all .1s ease;
+  -o-transition: all .1s ease;
+  transition: all .1s ease;
+}
+
+a#doPrint:hover {
+    color: rgba(255,255,255,1);
+    background-color: rgba(219,87,5,1);
+    -webkit-box-shadow: 0px 9px 0px rgba(219,31,5,1), 0px 9px 25px rgba(0,0,0,.7);
+    -moz-box-shadow: 0px 9px 0px rgba(219,31,5,1), 0px 9px 25px rgba(0,0,0,.7);
+    box-shadow: 0px 9px 0px rgba(219,31,5,1), 0px 9px 25px rgba(0,0,0,.7);
+
+}
+
+a#doPrint:active {
+    -webkit-box-shadow: 0px 3px 0px rgba(219,31,5,1), 0px 3px 6px rgba(0,0,0,.9);
+    -moz-box-shadow: 0px 3px 0px rgba(219,31,5,1), 0px 3px 6px rgba(0,0,0,.9);
+    box-shadow: 0px 3px 0px rgba(219,31,5,1), 0px 3px 6px rgba(0,0,0,.9);
+}
+
+
+  </style>
+
 
 </head>
 
-<body>
+<body  ng-controller = "Ctrl" >
 
-  <div class="wrapper">
-    <header>
-      <h1 class="title">Reporter</h1>
-    </header>
-    <div id="container">
-      <p class="tagline">公民記者證列印</p>
-      <div id="main" role="main">
-        <div class="download-bar">
-        <div class="inner">
-          <a href="https://github.com/g0v/reporter/tarball/master" class="download-button tar"><span>Download</span></a>
-          <a href="https://github.com/g0v/reporter/zipball/master" class="download-button zip"><span>Download</span></a>
-          <a href="https://github.com/g0v/reporter" class="code">View Reporter on GitHub</a>
+    <table id = "main" border = "3px">
+
+      <tr>
+        <td>
+
+      <div id = "titleBar">
+        記者證
+      </div>
+
+    <!--  <div id = "redBar">
+      </div>  -->
+
+
+      <table id ="in">
+      <tr>
+      <td id ="left">
+            <img class = "face" src = "{{root.photo}}" ng-show = "root.photo" ng-click = "root.photo = ''" />
+            <span ng-hide = "root.photo">
+
+              <ol>
+                <li>「貼」您的照片 
+                <li>「印」下您的公民記者證
+                <li>「前」往現場
+              </ol>
+
+              <input class="hidden" type="file" fileread="root.photo" accept="image/*" capture="camera" id="file-upload" />
+
+            </span>
         </div>
-        <span class="blc"></span><span class="trc"></span>
-        </div>
-        <article class="markdown-body">
-          <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+      </td>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+      <td id = "right">
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+            <span ng-show = "root.name  && !editing" ng-bind = "root.name">
+            </span>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+            <span ng-hide = "root.name && !editing">
+              請輸入您的名字：<input ng-model = "root.name" ng-focus = "editing = 1" ng-blur = "editing = 0"/ ng-keypress = "maybeDone($event)">
+            </span>
 
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
-
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-        </article>
-      </div>
-    </div>
-    <footer>
-      <div class="owner">
-      <p><a href="https://github.com/g0v" class="avatar"><img src="https://avatars2.githubusercontent.com/u/2668086?s=60" width="48" height="48"/></a> <a href="https://github.com/g0v">g0v</a> maintains <a href="https://github.com/g0v/reporter">Reporter</a></p>
-
+          </td>
+        </tr>
+      </table>
 
       </div>
-      <div class="creds">
-        <small>This page generated using <a href="http://pages.github.com/">GitHub Pages</a><br/>theme by <a href="https://twitter.com/jonrohan/">Jon Rohan</a></small>
-      </div>
-    </footer>
-  </div>
-  <div class="current-section">
-    <a href="#top">Scroll to top</a>
-    <a href="https://github.com/g0v/reporter/tarball/master" class="tar">tar</a><a href="https://github.com/g0v/reporter/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
-    <p class="name"></p>
-  </div>
 
+      <br><br>
+
+        <span id = "foot">
+            公民記者
+        </span>      
+
+        </td>
+
+        <td id = "r">
+
+        <span id = "rt">憲法保障公民記者採訪自由</span>
+
+      <br><br>
+
+
+      司法院釋字第 613 號：
+憲法第十一條所保障之言論自由，其內容包括通訊傳播自由，亦即經營或使用廣播、電視與其他通訊傳播網路等設施，以取得資訊及發表言論之自由。
+
+<br><br>
+
+司法院釋字第 689 號：
+新聞自由所保障之新聞採訪自由並非僅保障隸屬於新聞機構之新聞記者之採訪行為，亦保障一般人為提供具新聞價值之資訊於眾，或為促進公共事務討論以監督政府，而從事之新聞採訪行為。
+
+<br><br>
+
+
+  <a href = "http://www.judicial.gov.tw/constitutionalcourt/p03_01.asp?expno=689"><img class = "qr" src="http://chart.apis.google.com/chart?chs=200x200&amp;cht=qr&amp;chld=|1&amp;chl=http://www.judicial.gov.tw/constitutionalcourt/p03_01.asp?expno=689"></a>
+
+  大法官解釋全文<br>
+  http://goo.gl/n0DElg
+
+  </td>
   
+
+
+<a id = "doPrint" ng-show ="root.photo && root.name &&!editing" onclick = "$(this).hide(); window.print()"> 列印!  </a>
+
+
+
 </body>
+
+<script type="text/javascript">
+
+  var reporterApp = angular.module('reporterApp', []);
+
+  reporterApp.directive("fileread", [function () {
+    return {
+        scope: {
+            fileread: "="
+        },
+        link: function (scope, element, attributes) {
+            element.bind("change", function (changeEvent) {
+                var reader = new FileReader();
+
+                reader.onload = function (loadEvent) {
+                    scope.$apply(function () {
+                        var f = loadEvent.target.result; 
+                        
+                        if (f.substr(0,1) == '{') {
+                            f = JSON.parse(f);
+                        }                     
+                        
+                        scope.fileread = f;
+                      
+                    });
+                }
+
+                if (attributes.filetype == 'json') {
+                    reader.readAsText(changeEvent.target.files[0]);
+                } else {
+
+                    var filesize = ((changeEvent.target.files[0].size/1024)/1024).toFixed(4)*1024; // KB
+
+                //    if (filesize > 100) {
+                //      alert("檔案超過100KB");                // limit: 100KB
+                //    } else {
+                      reader.readAsDataURL(changeEvent.target.files[0]);                     
+                //    }
+                  
+                  }
+                
+            });
+        }
+    }
+}]);
+  
+  var Ctrl = function ($scope) {
+    $scope.root = {};
+
+    $scope.maybeDone = function(e){
+      if (e.keyCode == 13) $scope.editing = 0;
+    }
+  }
+
+
+</script>
+
 </html>

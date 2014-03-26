@@ -1,0 +1,1734 @@
+
+<!DOCTYPE html>
+<html ng-app = "editApp">
+
+<head>
+<script src="javascripts/lib/jquery-1.10.2.js"></script>
+<script src="javascripts/lib/jquery-ui.js"></script>
+<script src="javascripts/lib/angular.min.js"></script>
+
+<script src='https://cdn.firebase.com/v0/firebase.js'></script>
+<script src='https://cdn.firebase.com/libs/angularfire/0.5.0/angularfire.min.js'></script>
+
+<script src="javascripts/news.js"></script>
+
+<meta charset=utf-8 />
+
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="http://bestian.github.io/shackhand/plan.html" />
+    <meta property="og:title" content="自學2.0學習計畫小幫手" />
+    <meta property="og:image" content="http://bestian.github.io/shackhand/img/top01.jpg" />
+
+<title>自學2.0學習計畫編輯器--自學，從為自己做計畫開始</title>
+
+
+<link rel="stylesheet" href="stylesheets/editor.css" />
+<!--<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/flick/jquery-ui.css"> -->
+
+</head>
+
+
+<body ng-controller = "Ctrl" ng-keydown = "maybeSave($event)" class = "{{root.data.c.theme}}">
+
+  <audio id ="easy" controls class = 'noPrint' >
+    <source src="voice/easy.mp3" type="audio/mpeg">
+    <source src="voice/easy.ogg" type="audio/ogg">
+  </audio>
+
+<div id = "logo" class = "flashStart noPrint">
+  <a href = "http:/www.alearn.org.tw" target = "_blank">
+    <img src="img/top01.jpg"/>
+  </a>
+</div>
+
+
+<div id = "headInfos" class = "noPrint {{root.data.c.theme}}">
+
+  <div>
+<!-- TOOL -->
+    <span id = 'updownload'>
+
+        <a id = "download" class ="d" ng-href="{{root | forDownload}} " download = "{{root.data.myName | forDownloadName }}" target = "_blank" ng-mouseover = "hintD = true" ng-mouseout = "hintD = false"
+        ng-click = "save('noAlert')"> 儲存檔案
+
+        <span ng-show = "hintD">
+        <br>
+
+          <span ng-bind = " '如出現一個很多字的頁面，請依下列指示：在空白處按「右鍵」→ 選「將網頁諸存為」→ 「'+ root.data.myName + '的學習計劃.plan.json」'">
+
+         </span>
+        
+        </span>
+        </a>
+
+        <span>
+
+      <input style = "width:16px" name = "pub" type = "radio" ng-model = "root.data.public" value="2"/>公開
+
+  <!--    <input style = "width:16px" name = "pub" type = "radio" ng-model = "root.data.public" value="1"/>不公開 -->
+      
+      <input style = "width:16px" name = "pub" type = "radio" ng-model = "root.data.public" value="0" />私人
+
+
+    <a id = "info" class = "msg-icon msg-icon-info"
+        ng-click = "askPublic()">
+     </a>
+    
+        </span>
+
+
+      開啟舊檔
+      
+        <input id ="upload" type="file" fileread = "root" filetype = "json" accept="application/json"/>
+
+
+    </span>
+  </div>
+
+
+<!-- TOOL -->
+
+  <div ng-show = "tube">
+
+    <span id = 'status'>
+
+      <span id = 'lastTime' ng-bind = "'上次存檔: '+(root.data.time | localTime)"> </span>  
+      <span id = 'remTime' ng-bind = "'___尚餘'+(root.data.time | countTime:delay:clock | showRemTime)">資料讀取中...</span>
+    </span>
+
+    <a id = "info" class = "msg-icon msg-icon-info"
+        onclick = "
+          if (confirm('非營利專案^_^\n\n免費版容量有限(所有用戶共100MB)\n\n請珍惜使用\n\n若放置不用將於期限後刪除\n\n每次存檔，即可延長期限^_^')) window.open('https://www.firebase.com/pricing.html')">
+     </a>
+
+    前往：<input ng-model = 'name' ng-focus = "name = (!currentUser && currentName) || root.data.c.supports[0] "  ng-keypress = "mayBeChName($event, name)" placeholder ="輸入名字" />
+    
+    <a id = 'go' ng-click = 'chName(name)'>拜訪</a>
+    
+    <span id = "loginSpan" ng-hide = "currentUser">
+    或
+      <input ng-model = "password" type = "password"  ng-keypress = "mayBeChName($event, name, password)" placeholder ="輸入密碼以登入"/> 
+
+      <a id = 'login' ng-click = 'chName(name, password)'>登入</a>
+
+    </span>
+
+  </div>
+
+
+  <div id = "rightHead">
+
+    <div ng-show = "tube">
+      <a id = 'unlock' ng-click = 'save()' ng-show = 'lock && !sandbox'>已上鎖</a>
+      <a id = 'lock' ng-click = 'lock = true' ng-show = '!lock && !sandbox'>已解鎖</a>
+
+      
+      <span id = 'status' ng-show = 'sandbox'>沙盒</span>
+      <span ng-bind = "currentUser || '訪客' ">讀取中...</span>
+
+      <a id = 'logut' ng-click = 'currentUser = false; lock = true;' ng-show = 'currentUser'>登出</a>
+
+    </div>
+
+    <select ng-model = "root.data.c.theme" class = "s">
+      <option ng-selected ="root.data.c.theme == '春'" value = "spring">春</option>
+      <option ng-selected ="root.data.c.theme == '夏'" value = "summer">夏</option>
+      <option ng-selected ="root.data.c.theme == '秋'" value = "fall">秋</option>
+      <option ng-selected ="root.data.c.theme == '冬'" value = "winter">冬</option>
+      <option ng-selected ="!root.data.c.theme" value = "">自訂主題</option>
+    </select>
+  </div>
+  
+</div>
+
+
+<div id = "headPlans" class = "noPrint {{root.data.c.theme}}" ng-init = "editTitle = [false, false]">
+
+  <span ng-repeat = 'n in [0,1]' >
+
+    <a class = "{{$parent.root.data.c.planNow == n && 'focus'}}" ng-click = '$parent.root.data.c.planNow = n; quite();'  ng-mouseover = "editTitle[n] = $parent.root.data.c.planNow == n" ng-mouseout = "editTitle[n] = false">     
+
+     <span ng-bind = "root.data.t[n].title || n+1" 
+     ng-hide = "editTitle[n]"></span>
+
+     <input
+     ng-model = "root.data.t[n].title"
+     placeholder = "自訂標題" 
+     ng-show = "editTitle[n]" />
+
+    </a>
+
+  </span>
+
+</div>
+
+
+<div id = 'rightPages' class = "noPrint {{root.data.c.theme}}">
+
+
+
+  <ul>
+    <li ng-repeat = "k in ['自傳', '學習風格','學習主題與領域','一週節奏','進度與目標','學習支持與資源','希望支援','意見箱']" class = "{{$parent.root.data.c.pageNow == k && 'focus'}}" ng-mouseover = "$parent.root.data.c.pageNow = k;quite(); $parent.focusCol = onlyTrue(focusCol,'none')"> 
+
+      <img src="img/leaf-yellow.png" class = "leaf" ng-show = "root.data.c.pageNow == k"/>
+      <img src="img/leaf-shadow.png" class="leaf shadow"/> 
+
+      <br/>
+
+      <span ng-bind = "(currentName || root.data.myName || '您') + '的' + k"></span>
+      
+      </li>
+  </ul>
+
+</div>
+
+<!---->
+
+
+<div id = 'leftSupports' class = 'noPrint {{root.data.c.theme}}'>
+
+<br>
+<h3 ng-bind = "root.data.c.pageNow">每頁都有不同的資源</h3>
+
+<span>的參考資源：</span>
+
+    <audio id ="topic" controls ng-show = "root.data.c.pageNow == '學習主題與領域'" ng-init = "help['主題'] = false" ng-click = "help['主題'] = true">
+            <source src="voice/topic.mp3" type="audio/mpeg">
+            <source src="voice/topic.ogg" type="audio/ogg">
+    </audio>
+
+    <a id = "info" class = "msg-icon msg-icon-info" ng-click = "help['學習支持與資源'] = true" ng-show = "root.data.c.pageNow == '學習支持與資源'">
+    </a>
+
+    <a id = "info" class = "msg-icon msg-icon-info" ng-click = "help['希望支援'] = true" ng-show = "root.data.c.pageNow == '希望支援'">
+    </a>
+
+
+  <hr>
+<ul>
+	<li ng-repeat = "sup in supports | has:root.data.c.pageNow | invis:root.data.c.pageNow " ng-click = "op(sup.split(' ')[1])" ng-mouseover = "$parent.supNow = sup; $parent.pop = true; $parent.popURL = sup.split(' ')[1]">
+
+      <img src="img/leaf-green.png" class="leaf" ng-show = "supNow == sup"/>
+      <img src="img/leaf-shadow.png" class="leaf shadow"/>
+
+      <br/>
+
+      <span ng-bind = "sup.split(' ')[0]"></span>
+   
+</ul>
+
+</div>
+
+
+<div id = 'main' class = "{{root.data.c.theme}}" 
+
+ng-dblclick = "focusCol = onlyTrue(focusCol,'none')"
+ 
+>
+
+  <div id = "title" ng-show = "tube">
+      
+    <span id = 'status' ng-show = 'updated'>所有更動已儲存</span>
+    <span id = 'status' ng-hide = 'updated'>等待儲存...按Ctrl+S儲存</span>
+    <span id = 'status' ng-show = 'justDeleted'>本頁已刪除</span>
+
+    <br>
+
+  </div>
+
+
+  <div id ='page1' ng-show = "root.data.c.pageNow == '自傳' && ( !tube || !lock || sandbox || root.data.c.share[root.data.c.pageNow])">
+
+    <span ng-mouseover = "editMyName = true" ng-mouseout = "editMyName = false">
+
+      <h2 ng-hide = "editMyName" ng-bind = "root.data.myName || '您'"></h2>
+      <h2 ng-show = "editMyName"> <input ng-model ="root.data.myName"></h2>
+
+    </span>
+
+    <div id = "photo"  >
+
+      <img id = "x" class = "face" src = "{{root.data.t[root.data.c.planNow].mainImg}}" ng-show = "root.data.t[root.data.c.planNow].mainImg" ng-click = "root.data.t[root.data.c.planNow].mainImg = ''" />
+
+          <div id ="public" ng-show = "tube">
+                <input id = "mainImg"  type="checkbox" ng-model="root.data.c.share[root.data.c.planNow]['自傳']">
+
+                <span ng-bind = "(root.data.c.share[root.data.c.planNow]['自傳'] && '公開分享自傳') || '不公開自傳'"></span>
+
+                <a id = "info" class = "msg-icon msg-icon-info"
+                  onclick = "alert('個人檔案中的自傳，可選擇公開或不公開^_^')">
+                </a>
+          </div>
+
+      <br>
+      <span ng-hide = "root.data.t[root.data.c.planNow].mainImg">
+
+        貼一張照片(檔案大小:100KB以下) 
+
+        <input class="hidden" type="file" fileread="root.data.t[root.data.c.planNow].mainImg" accept="image/*" capture="camera" id="file-upload" />
+
+        
+      </span>
+
+
+    </div>
+
+    <div id = "timeline" class = "draw noSelect">
+
+      <div ng-repeat = "y in ys">
+
+        <div ng-repeat = "x in xs" class = "px" style = "
+
+          top : {{y*10}}px; left : {{x*10}}px;
+
+          background-color: {{
+           (root.data.t[root.data.c.planNow].timeline[x] == y && 'rgb(' + (50 + x*3) + ',' + (255 - y *10 - x*3) + ',50)' ) || '#cfc' }}
+
+        " ng-mouseover = "draw($event,y,x,root.data.c.planNow,colorNow)"
+
+          ng-dblclick = "resetDraw(root.data.c.planNow)"
+
+        >          
+
+
+          &nbsp;
+
+        </div>
+
+      </div>
+
+    </div>
+    
+    <div style="text-align:right">
+	    成長軸線：我今年<input type = "number" ng-model = "root.data.t[root.data.c.planNow].age" />歲
+	</div>
+
+    <hr>
+	  <textarea rows= '22' cols = '52' ng-model = "root.data.t[root.data.c.planNow]['自傳']"  
+
+    ng-focus = " root.data.t[root.data.c.planNow]['自傳'] = hintToNull(root.data.t[root.data.c.planNow]['自傳']) "
+
+    ng-blur = "root.data.t[root.data.c.planNow]['自傳'] = root.data.t[root.data.c.planNow]['自傳'] || hintData.t[root.data.c.planNow]['自傳'] "
+    >
+
+
+    </textarea>
+  </div>
+
+  <div id ='page2' ng-show = "root.data.c.pageNow == '學習風格' && (!tube || !lock || sandbox || root.data.c.share[root.data.c.pageNow])">
+
+	  <textarea rows= '8' cols = '45'
+    ng-model = 'root.data.t[root.data.c.planNow]["學習風格"]'
+    ng-focus = " root.data.t[root.data.c.planNow]['學習風格'] = hintToNull(root.data.t[root.data.c.planNow]['學習風格']) "
+    ng-blur = "root.data.t[root.data.c.planNow]['學習風格'] = root.data.t[root.data.c.planNow]['學習風格'] || hintData.t[root.data.c.planNow]['學習風格'] "
+    > </textarea>
+
+           <span ng-show = "tube"
+
+           ng-bind = "(root.data.c.share[root.data.c.planNow]['學習風格'] && '公開分享學習風格') || '不公開學習風格'">
+
+            <a id = "info" class = "msg-icon msg-icon-info"
+              onclick = "alert('個人檔案中的學習風格，可選擇公開或不公開^_^')">
+            </a>
+
+            </span>
+
+    <ul>「視-聽-讀-作」參照
+    	<li><input type = "checkbox" ng-model = "root.data.t[root.data.c.planNow].styleV" />視覺：我喜歡看圖象來學習<br/><br/>
+    	<li><input type = "checkbox" ng-model = "root.data.t[root.data.c.planNow].styleA" />聽覺：我喜歡聽聲音來學習<br/><br/>
+    	<li><input type = "checkbox" ng-model = "root.data.t[root.data.c.planNow].styleR" />閱讀：我喜歡閱讀文字來學習<br/><br/>
+    	<li><input type = "checkbox" ng-model = "root.data.t[root.data.c.planNow].styleK" />動作：我喜歡實際操作來學習
+    </ul>
+
+    <hr>
+
+    <ul>「多元智能」
+    	<li><input type = "checkbox" ng-model = "root.data.t[root.data.c.planNow].style01" />語文智能：我喜歡口頭語言以及運用文字書寫<br/><br/>
+    	<li><input type = "checkbox" ng-model = "root.data.t[root.data.c.planNow].style02" />邏輯數學智能：我喜歡提出問題並執行實驗以尋求答案，尋找事物的規律及邏輯順序<br/><br/>
+    	<li><input type = "checkbox" ng-model = "root.data.t[root.data.c.planNow].style03" />空間智能：我對色彩、線條、形狀、形式、空間及它們之間關係的敏感性很高<br/><br/>
+    	<li><input type = "checkbox" ng-model = "root.data.t[root.data.c.planNow].style04" />肢體動覺智能：我善於運用整個身體來表達想法和感覺，以及運用雙手靈巧地生產或改造事物<br/><br/>
+    	<li><input type = "checkbox" ng-model = "root.data.t[root.data.c.planNow].style05" />音樂智能：我能察覺、辨別、改變和表達音樂，對節奏、音調、旋律或音色很敏銳<br/><br/>
+    	<li><input type = "checkbox" ng-model = "root.data.t[root.data.c.planNow].style06" />人際智能：我喜歡參與團體性質的活動，較願意找別人幫忙或教人如何做事，在人群中感到舒服自在<br/><br/>
+    	<li><input type = "checkbox" ng-model = "root.data.t[root.data.c.planNow].style07" />內省智能：我能自我瞭解，意識到自己內在情緒、意向、動機、脾氣和欲求，以及自律、自知和自尊的能力<br/><br/>
+    	<li><input type = "checkbox" ng-model = "root.data.t[root.data.c.planNow].style08" />自然觀察智能：我能認識植物、動物和其他自然環境，能在陌生的情境中自在探索。<br/><br/>
+    </ul>
+
+    <hr>
+
+    <ul>「整體-分析」
+    	<li><input name = "whole" type = "radio" ng-model = "root.data.t[root.data.c.planNow].styleWhole" value="Whole"/>
+    	整體學習：我喜歡一次瞭解一個整體的輪廊，再進入部份<br/><br/>
+    	<li><input name = "whole" type = "radio" ng-model = "root.data.t[root.data.c.planNow].styleWhole" value="Part"/>
+    	分析學習：我喜歡一次瞭解一個部份，再進入整體<br/><br/>
+    	<li><input name = "whole" type = "radio" ng-model = "root.data.t[root.data.c.planNow].styleWhole" value="Both" />
+    	綜合學習：先瞭解整體或部份，我都可以學得很好<br/><br/>
+    </ul>
+
+  </div>
+
+
+
+  <div id ='page3' ng-show = "root.data.c.pageNow == '學習主題與領域'">
+
+    <div class="noPrint">
+      <textarea id = "y" rows = "3" cols = "25"
+     ng-model = "addTopic" ng-keydown = "adTPC($event,'addTopic','主題');" placeholder = "寫上新主題，再按Enter新增"> </textarea>
+
+      <span ng-repeat = "t in root.data.t[root.data.c.planNow]['主題']"> <a id = "x" ng-click = "root.data.t[root.data.c.planNow]['主題'] = removeElem(root.data.t[root.data.c.planNow]['主題'], t)">{{t}}✘</a></span>
+
+      <br>
+          
+      <span id = "x" ng-click = "help['主題'] = false" ng-show = "help['主題']">
+        <ul>
+          <li>您的學習主題可以自訂好幾項，範圍不限。
+          <li>例如修車、養昆蟲、寫程式、打籃球、繪畫...都可以。
+          <li>先想自己要做什麼，再去和課綱上的七大領域，對照打勾，看看是不是都有。
+          <li>如果同一個主題，和許多領域都有關，可以在一行中，打好幾個勾。</ul> </span>
+
+      <hr>
+
+     </div>
+
+        <table>
+           <tr>
+            <th style="line-height: 50px;">
+           
+            <span style = "position:relative; top: 10px;">政府課綱</span>
+            <span style = "position:relative; top: 5px;">\</span>  自訂主題
+            </th>
+
+            <th ng-repeat = "t in root.data.t[root.data.c.planNow]['主題']"> {{t}}</th>
+           </tr>
+           <tr ng-repeat = "a in sevenFields" ng-show = "root.data.t[root.data.c.planNow].enable7F">
+
+            <th>{{a}}</th>
+              <td ng-repeat = "t in root.data.t[root.data.c.planNow]['主題']">
+              	
+<!--                <input type = "checkbox" ng-model ="root.data.t[root.data.c.planNow].correlation[a+t]"> -->
+
+                <a id = "aCheckbox" class="{{root.data.t[root.data.c.planNow].correlation[a+t] || 'false noPrint'  }}" 
+
+                 ng-click="root.data.t[root.data.c.planNow].correlation[a+t] = !root.data.t[root.data.c.planNow].correlation[a+t]">
+                	{{(root.data.t[root.data.c.planNow].correlation[a+t] && '✓') || ' '}}
+                </a>
+
+       <!--         <span class= "clipOnly"> {{ root.data.t[root.data.c.planNow].correlation[a+t] && "✓" || ''}} </span>  -->
+           </tr>
+           <tr ng-repeat = "f in root.data.t[root.data.c.planNow].fields">
+              <th>{{f}}</th>
+
+                <td ng-repeat = "t in root.data.t[root.data.c.planNow]['主題']">
+                
+
+                <a id = "aCheckbox" class="{{root.data.t[root.data.c.planNow].correlation[f+t] || 'false noPrint'  }}" 
+
+                 ng-click="root.data.t[root.data.c.planNow].correlation[f+t] = !root.data.t[root.data.c.planNow].correlation[f+t]">
+                  {{(root.data.t[root.data.c.planNow].correlation[f+t] && '✓') || ' '}}
+                </a>
+           </tr>
+
+
+        </table>
+
+        <div ng-show = "root.data.t[root.data.c.planNow].enable7F">
+         <span id = "status" class = "noPrint" ng-show = "count(root.data.t[root.data.c.planNow].correlation, sevenFields, root.data.t[root.data.c.planNow]['主題']) > 0">尚餘{{count(root.data.t[root.data.c.planNow].correlation, sevenFields, root.data.t[root.data.c.planNow]['主題'])}}個領域 </span>
+
+         <span id = "status" class = "noPrint" ng-hide= "count(root.data.t[root.data.c.planNow].correlation, sevenFields, root.data.t[root.data.c.planNow]['主題']) > 0">都對到了!!</span>
+        </div>
+
+
+        <div class="noPrint">
+         <br/>
+         <br/>
+         <input type = "checkbox" ng-model = "root.data.t[root.data.c.planNow].enable7F" /> 七大領域
+
+         <br/>
+         <br/>
+          <textarea id = "y" rows = "3" cols = "25"
+         ng-model = "addField" ng-keydown = "adTPC($event, 'addField', 'fields');" placeholder = "寫上新領域，再按Enter新增"> </textarea>
+
+          <span ng-repeat = "f in root.data.t[root.data.c.planNow].fields"> <a id = "x" ng-click = "root.data.t[root.data.c.planNow].fields = removeElem(root.data.t[root.data.c.planNow].fields, f)">{{f}}✘</a></span>
+
+        </div>
+  </div>
+
+
+  <div id ='page4' ng-show = "root.data.c.pageNow == '一週節奏'">
+
+   <table ng-style=" root.data.c.fontDT| makeCss:'font-size':'%' " >
+  		<tr>
+  			<th></th>
+  			<th></th>
+  			<th ng-repeat = "d in ['日','一','二','三','四','五','六']">{{d}}</th>
+  		</tr>
+
+  		<tr ng-repeat = "j in root.data.c.goldTimes ">
+
+  			<th 
+          ng-mouseover = "onlyTrue(focusCol,'h')"
+
+          rowspan="{{j.fs}}"
+          style="display : {{j.fd}}" 
+          >
+  				
+          {{ j.k | noDigit }}
+
+  			</th>
+
+  			<th 
+          ng-mouseover = "onlyTrue(focusCol,'h')">
+  				
+          {{ j.t }}
+
+  			</th>
+
+  			<td ng-repeat = "d in ['日','一','二','三','四','五','六']"
+                    ng-mouseover = "focusCol = onlyTrue(focusCol,d)"
+                     rowspan="{{ 
+           
+		           (focusCol[d] && 1) || 
+		            (d | countRowSpan:j.k:root.data.t[root.data.c.planNow].schedule:root.data.c.goldTimes) 
+
+		          }}" style = " display: {{ 
+
+		          (focusCol[d] && true) ||
+		            (d | countRowSpan:j.k:root.data.t[root.data.c.planNow].schedule:root.data.c.goldTimes)  || 'none' }} ">
+
+          <span ng-bind = "root.data.c[root.data.t[root.data.c.planNow].schedule[d+j.k]] || root.data.t[root.data.c.planNow].schedule[d+j.k]"
+
+          ng-hide = "focusCol[d]"></span>
+
+  				<select ng-model = "root.data.t[root.data.c.planNow].schedule[d+j.k]"
+  				ng-show = "focusCol[d]"
+  				value="{{root.data.t[root.data.c.planNow].schedule[d+j.k]}}">
+
+            <option value="" ng-selected=""></option>
+
+  					<option ng-repeat = "tp in root.data.t[root.data.c.planNow]['主題']"
+
+                    ng-selected="{{tp == root.data.t[root.data.c.planNow].schedule[d+j.k]}}"
+
+                    value="{{tp}}">
+                    {{root.data.c[tp] || tp}}
+            </option>
+
+            <option value="彈性">{{root.data.c['彈性'] || "彈性"}}</option>
+            <option value="休息">{{root.data.c['休息'] || "休息"}}</option>
+
+  				</select>
+
+  			</td> 			
+  		</tr>
+
+ <!--     <tr ng-show = "focusCol['h']">
+        <th colspan="8">
+          <input id = "y"  ng-model = "newJ" placeholder = "新增時段"
+           ng-keypress = "mayBePushDJ($event, newJ)"
+          />
+
+          <a id = "y" ng-click = "root.data.c.dayTimes.push(newJ); newJ = ''">新增</a> 
+        </th>
+      </tr>  -->
+  		
+  	</table>
+
+  	<div class="noPrint">
+
+	    <span style = "display:inline-block;">
+	      字體大小 → <input type = "number" ng-model = "root.data.c.fontDT">%
+	    </span><br/>
+
+	    <span style = "display:inline-block;">
+	      休息 → <input ng-model = "root.data.c['休息']" placeholder = "自訂記號">
+	    </span><br/>
+	    <span style = "display:inline-block;">
+	      彈性 → <input ng-model = "root.data.c['彈性']" placeholder = "自訂記號">
+	    </span><br/>
+	    <span style = "display:inline-block;" ng-repeat = "tp in root.data.t[root.data.c.planNow]['主題']">
+	      {{tp}} → <input ng-model = "root.data.c[tp]" placeholder = "自訂記號">
+
+	<!--
+	      <input ng-model = ""
+	      placeholder = "自訂背景色">   -->
+
+	    </span>
+
+	<!--dayTime-->
+
+	<hr>
+
+	    <span style = "display:inline-block;" ng-repeat = "j in root.data.c.dayTimes">
+	      {{j}} → <input ng-model = "root.data.c[j]"
+						  ng-keypress = "updateGold()"
+						  placeholder = "可自訂時間">
+	    </span><br/>
+
+	    <button ng-click = "updateGold()">更新</button>
+	</div>
+   
+  </div>
+
+
+  <div id ='page5' ng-show = "root.data.c.pageNow == '進度與目標'">
+
+  <div class ="noPrint">
+	   <select ng-model = "timeT" ng-init = "timeT = 'm'">
+		   	<option value="m">月進度</option>
+	<!--  	   	<option value="y">年進度</option>  -->
+	<!--	    <option value="w">週進度</option> -->
+	   </select>
+
+	   自<input type="number" ng-model = "root.data.t[root.data.c.planNow].shift"/>月起
+
+	   <br/>
+
+		字體大小 → <input type = "number" ng-model = "root.data.c.fontTT">%
+
+		<input type = "checkbox" ng-model = "root.data.t[root.data.c.planNow].showFields" />
+		<input type = "checkbox" ng-model = "root.data.t[root.data.c.planNow].outCheck" />
+
+
+   </div>
+
+   <table ng-style=" root.data.c.fontDT| makeCss:'font-size':'%' " >
+  		<tr>
+  			<th></th>
+  			<th ng-hide = "root.data.t[root.data.c.planNow].showFields" ng-repeat = "tp in root.data.t[root.data.c.planNow]['主題']">{{tp}}</th>
+
+  			<th ng-show = "root.data.t[root.data.c.planNow].showFields" ng-repeat = "tp in root.data.t[root.data.c.planNow].fields">{{tp}}</th>
+  		</tr>
+
+      <tr ng-show = "root.data.t[root.data.c.planNow].outCheck">
+        <th>自學評鑑項目</th>
+
+        <td ng-hide = "root.data.t[root.data.c.planNow].showFields" ng-repeat = "tp in root.data.t[root.data.c.planNow]['主題']">
+            <span ng-repeat = "m in ['口頭說明','學習檔案','教師評量','家長自評','考試檢定']">
+
+              <span id = "present" class = "{{root.data.t[root.data.c.planNow].checkGoal[tp+m] || 'false noPrint' }}">
+              	{{m}}
+
+              <a id = "aCheckbox" class="{{root.data.t[root.data.c.planNow].checkGoal[tp+m] }}" 
+               ng-click="root.data.t[root.data.c.planNow].checkGoal[tp+m] = !root.data.t[root.data.c.planNow].checkGoal[tp+m]">
+                	{{(root.data.t[root.data.c.planNow].checkGoal[tp+m] && '✓') || ''}}
+                </a></span><br>
+            </span>
+			
+			<span id = "present">
+
+				<textarea cols="4" rows="1" ng-model = "root.data.t[root.data.c.planNow].checkGoal[tp+'自訂評量']"  ng-show = "root.data.t[root.data.c.planNow].checkGoal[tp+'自訂']">
+				</textarea>
+
+				<a id = "aCheckbox" class="{{root.data.t[root.data.c.planNow].checkGoal[tp+'自訂'] }}" 
+               ng-click="root.data.t[root.data.c.planNow].checkGoal[tp+'自訂'] = !root.data.t[root.data.c.planNow].checkGoal[tp+'自訂']">
+                	{{(root.data.t[root.data.c.planNow].checkGoal[tp+'自訂'] && '✓') || ''}}
+                </a>
+
+        	</span>
+
+        </td>
+
+        <td ng-show = "root.data.t[root.data.c.planNow].showFields" ng-repeat = "tp in root.data.t[root.data.c.planNow].fields">
+
+        <!-- Dirty -->
+
+        <span ng-repeat = "m in ['口頭說明','學習檔案','教師評量','家長自評','考試檢定']">
+
+              <span id = "present" class = "{{root.data.t[root.data.c.planNow].checkGoal[tp+m] || 'false noPrint' }}">
+              	{{m}}
+
+              <a id = "aCheckbox" class="{{root.data.t[root.data.c.planNow].checkGoal[tp+m] }}" 
+               ng-click="root.data.t[root.data.c.planNow].checkGoal[tp+m] = !root.data.t[root.data.c.planNow].checkGoal[tp+m]">
+                	{{(root.data.t[root.data.c.planNow].checkGoal[tp+m] && '✓') || ''}}
+                </a></span><br>
+            </span>
+			
+			<span id = "present">
+
+				<textarea cols="4" rows="1" ng-model = "root.data.t[root.data.c.planNow].checkGoal[tp+'自訂評量']"  ng-show = "root.data.t[root.data.c.planNow].checkGoal[tp+'自訂']">
+				</textarea>
+
+				<a id = "aCheckbox" class="{{root.data.t[root.data.c.planNow].checkGoal[tp+'自訂'] }}" 
+               ng-click="root.data.t[root.data.c.planNow].checkGoal[tp+'自訂'] = !root.data.t[root.data.c.planNow].checkGoal[tp+'自訂']">
+                	{{(root.data.t[root.data.c.planNow].checkGoal[tp+'自訂'] && '✓') || ''}}
+                </a>
+        	</span>
+
+        <!-- Dirty -->
+
+
+        </td>
+      </tr>
+
+  		<tr ng-repeat = "j in calanD[timeT] | shifted:root.data.t[root.data.c.planNow].shift">
+
+  			<th>
+  				{{j}}
+  			</th>
+
+  			<td ng-hide = "root.data.t[root.data.c.planNow].showFields" ng-repeat = "tp in root.data.t[root.data.c.planNow]['主題']"
+	          ng-mouseover = "focusCol = onlyTrue(focusCol,tp)"
+	          style = "width:150px"
+	        >
+	    <strong> {{tp + j}} </strong><hr>
+
+	        <span ng-hide = "focusCol[tp]" ng-bind = "root.data.t[root.data.c.planNow].goal[tp + j]"></span>
+
+	  			<textarea ng-show = "focusCol[tp]" cols="4" rows="6" 
+	 ng-model = "root.data.t[root.data.c.planNow].goal[tp + j]"
+	 onfocus="$(this).attr('cols', 6)" onblur="$(this).attr('cols', 4)" placeholder= "目標或記錄"></textarea>  				
+
+	        <br>
+
+	         <input type = "checkbox" ng-model = "root.data.t[root.data.c.planNow].checkGoal[tp+j]" ng-show = "root.data.t[root.data.c.planNow].goal[tp + j]"/>
+	         
+	        <span class = "clipOnly"> {{ root.data.t[root.data.c.planNow].checkGoal[tp+j] && "✓" || ''}} </span>
+
+	          <span ng-show = "root.data.t[root.data.c.planNow].checkGoal[tp+j]">成功</a>
+  				
+  			</td>
+
+  			<!--Dirty-->
+  			<td ng-show = "root.data.t[root.data.c.planNow].showFields" ng-repeat = "tp in root.data.t[root.data.c.planNow].fields"
+	          ng-mouseover = "focusCol = onlyTrue(focusCol,tp)"
+	          style = "width:150px"
+	        >
+	          {{tp + j}} <br><br>
+
+	        <span ng-hide = "focusCol[tp]" ng-bind = "root.data.t[root.data.c.planNow].goal[tp + j]"></span>
+
+	  			<textarea ng-show = "focusCol[tp]" cols="4" rows="6" 
+	 ng-model = "root.data.t[root.data.c.planNow].goal[tp + j]"
+	 onfocus="$(this).attr('cols', 6)" onblur="$(this).attr('cols', 4)" placeholder= "目標"></textarea>  				
+
+	        <br>
+
+	         <input type = "checkbox" ng-model = "root.data.t[root.data.c.planNow].checkGoal[tp+j]" ng-show = "root.data.t[root.data.c.planNow].goal[tp + j]"/>
+	         
+	        <span class = "clipOnly"> {{ root.data.t[root.data.c.planNow].checkGoal[tp+j] && "✓" || ''}} </span>
+
+	          <span ng-show = "root.data.t[root.data.c.planNow].checkGoal[tp+j]">成功</a>
+  				
+  			</td>
+
+  			<!--Dirty-->		
+
+
+  		</tr>
+  		
+  	</table>
+  </div>
+
+
+  <div id ='page6' ng-show = "root.data.c.pageNow == '學習支持與資源' ">
+
+	<span id = "x" ng-click = "help['學習支持與資源'] = false" ng-show = "help['學習支持與資源']">
+    	<ul>
+      		<li>你不一定要只在家裡或社區，自學生也可以規畫一部份時間，在學校上課。
+      		<li>不僅可以規畫在原本的學校上課，也可以去任何一所公立大學旁聽。
+      		<li>政府的政策是，所有公立大學都開放旁聽。
+    	</ul>
+    </span>
+
+    <hr>
+
+  	<table>
+  		<tr><th></th><th>支持與資源</th></tr>
+
+  		<tr ng-repeat = "tp in root.data.t[root.data.c.planNow]['主題']">
+
+        <th> {{tp}} </th>
+
+  			<td>
+
+  			<textarea cols="30" rows="8"
+
+          	ng-model = "root.data.t[root.data.c.planNow].resources[tp]"
+
+            placeholder= "{{ hintSupports | tto:tp }}">
+
+          		</textarea>
+
+  			</td>
+
+  		</tr>
+
+  	</table>
+
+
+  </div>
+
+ <div id ='page7' ng-show = "root.data.c.pageNow == '希望支援' ">
+
+
+    <span id = "x" ng-click = "help['希望支援'] = false" ng-show = "help['希望支援']">
+        <ul>
+            <li>自學生也具有正式的學生身份。
+            <li>您可以部份時間到學校上課。
+            <li>您可以使用學校的設備。
+            <li>您可以使用政府公家單位的教育資源，例如圖書館和博物館。
+            <li>您可以到公立大學旁聽。
+        </ul>
+    </span>
+
+    <hr>
+
+      <textarea rows= '12' cols = '30'
+      ng-model = 'root.data.t[root.data.c.planNow].callHelp'
+
+      ng-focus = " root.data.t[root.data.c.planNow].callHelp = hintToNull(root.data.t[root.data.c.planNow].callHelp) "
+
+      ng-blur = "root.data.t[root.data.c.planNow].callHelp = root.data.t[root.data.c.planNow].callHelp || hintData.t[root.data.c.planNow].callHelp "> </textarea>
+
+      <!-- 糊糊地址   Join 自學2.0  -->
+
+  </div>
+
+  <div id ='feedback' ng-show = "root.data.c.pageNow == '意見箱' ">
+
+      〈自學2.0計畫編輯器〉的功能，我覺得：<br/>
+
+      <input name = "function" type = "radio" ng-model = "root.data.feedback.function" value="5"/>非常好
+         <input name = "function" type = "radio" ng-model = "root.data.feedback.function" value="4"/>好
+             <input name = "function" type = "radio" ng-model = "root.data.feedback.function" value="2"/>待改進
+                 <input name = "function" type = "radio" ng-model = "root.data.feedback.function" value="1"/>非常待改進
+
+      <br>
+
+      <span ng-show = "root.data.feedback.function < 3">具體建議:
+        <textarea rows= '4' cols = '30' ng-model = "root.data.feedback.functionText" >
+        </textarea>
+      </span> 
+
+    <hr>
+
+      〈自學2.0計畫編輯器〉的畫面，我覺得：<br/>
+
+      <input name = "style" type = "radio" ng-model = "root.data.feedback.style" value="5"/>非常好
+         <input name = "style" type = "radio" ng-model = "root.data.feedback.style" value="4"/>好
+             <input name = "style" type = "radio" ng-model = "root.data.feedback.style" value="2"/>待改進
+                 <input name = "style" type = "radio" ng-model = "root.data.feedback.style" value="1"/>非常待改進
+
+      <br>
+
+      <span ng-show = "root.data.feedback.style < 3">具體建議:
+        <textarea rows= '4' cols = '30' ng-model = "root.data.feedback.styleText" >
+        </textarea>
+      </span> 
+
+    <hr>
+
+      <textarea rows= '6' cols = '30'
+      ng-model = "root.data.feedback.text"  placeholder = "其他您想說的話">
+
+       </textarea>
+
+    
+    <hr>
+
+      <h3>邀約志願者</h3>
+
+      <p>自學2.0是一個非營利的「教育-學習」專案。</p>
+      <p>不為什麼，只為著手實現一個未來：</p>
+      <p>任何年段、任何家庭背景的人都可以適性學習，想學習的人都能尋得好的支持和資源。自學普及化。</p>
+      <p>邀請您參與共創。</p>
+
+      <h3>協力志願者邀約：</h3>
+
+      <ul>
+        <li>自學社群親師生
+          <br/>→具體經驗
+
+          <br/><br/> 
+
+        <li>網路視覺設計志願者
+          <br/>→樣式設計
+
+          <br/><br/> 
+
+        <li>網路後端設計志願者
+
+          <br/>→資料庫設計
+
+          <br/><br/>
+
+        <li>網路前端設計志願者
+          <br/>→使用者經驗設計
+
+          <br/><br/>
+
+        <li>行動應用設計志願者
+          <br/>→手機版App開發
+
+
+      </ul>
+      
+      意者請洽：自學2.0專案發起人 唐宗浩 bestian@gmail.com
+      <br/>
+
+      *設計志願者，請附上您的的<a href = "https://github.com/" target="_blank">Github ID</a>，謝謝!
+      
+  </div>
+
+
+</div>
+
+
+<div id='popup-content' popup='popURL' class = "{{pop}}" ng-mouseout = "pop = false">
+
+  <iframe id ="myframe" width = "100%" height = "100%">
+
+  </iframe>
+
+</div>
+
+
+
+
+</body>
+
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+  
+  $('.noSelect').disableSelection();
+
+    $('.flashStart').fadeOut(6000);
+//    $('.flashStart').css('z-index', 0);
+
+});
+
+  var ctt = function(t,p,clock){
+      return t + p*1000*60*60*24 - clock; 
+  }
+
+  var timeToDay = function(t) {
+    return Math.floor(t / (1000*60*60*24));
+  }
+
+
+
+  var editApp = new angular.module('editApp',["firebase"]);
+
+  editApp.config(['$compileProvider', function($compileProvider) {  // fix unsafe bug
+      $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|file|tel|data):/);
+  }]).filter('has',function(){
+  	return function(list, x){
+  		return list.filter(function(str){return (str.indexOf(x) > -1) || (str.indexOf('all') > -1) })
+  	}
+  }).filter('makeCss',function(){
+  	return function(a,k,o){
+  		var ans = {};
+  		ans[k] = a+o;
+  		return ans;
+  	}
+  }).filter('noDigit',function(){
+  	return function(str){
+  		return str.replace(/\d/g,'')
+  	}
+  }).filter('invis',function(){
+    return function(list, x){
+      return list.map(function(str){return str.replace(x+',', '').replace('all,', '')});
+    } 
+  }).filter('forDownload',function(){
+    return function(obj){
+      return "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj))
+    }   //的學習計劃.json
+  }).filter('forDownloadName',function(){
+    return function(str){
+      if (!str) {str = '' } else {str += '的'};
+      return str+'學習計劃.plan.json';
+    }   
+    return function(list, x){
+    	var ans = [];
+    	var m = list.length;
+    	for (var i = 0; i < m; i++) {
+    		var k = (x+i-1) % m;
+    		ans.push(list[k]);
+    	};
+	    return ans;
+    } 
+  }).filter('countRowSpan',function(){
+    return function(d,j,schedule,rowObjs){
+
+        var inx;
+        for (var i = 0; i < rowObjs.length; i++) {
+        	if (rowObjs[i].k == j) {
+        		inx = i;
+        		break;
+        	}
+        };
+
+        var ans = (schedule[d + j] && 1) || 0;
+
+        if (inx ==0 || inx == rowObjs.length) ans = 1;
+
+        if (ans == 0 ) return;
+
+        for (var i = inx+1; i < rowObjs.length; i++) {
+          var jj = rowObjs[i].k;
+          
+          if ( schedule[d + jj] ) { break } else { ans++; }
+        };     
+        return ans;
+    }
+  }).filter('localTime',function(){
+    return function(t){      
+      	var d = new Date(t);
+      	l = d.toLocaleString();
+  	    return t ? l.replace(/\[.*\]/,'') : "未創建";
+    }
+  }).filter('countTime',function(){
+    return ctt;
+  }).filter('showRemTime',function(){
+    return function(t){
+
+	    return t ? timeToDay(t) +"天^_^" : "很多時間^_^";
+    }
+  }).filter('tto',function(){
+    return function(s,i){
+	    return s.replace(/t/g,i);
+    }
+  }).filter('shifted',function(){
+    return function(list,num){
+    	var ansList = new Array;
+    	for (var i = num-1; i < list.length; i++) {
+    		ansList.push(list[i % list.length]);
+    	};
+	    return ansList;
+    }
+  }).directive('popup', function() {
+  var p = {
+      link : function(scope, iElement, iAttrs){
+           //code to wrap the div (iElement) with a abs pos div (parentDiv)
+          // code to add a mask layer div behind 
+          // if the parent is already there, then skip adding it again.
+         //use jquery ui to make it dragable etc.
+          scope.$watch(iAttrs.popup, function(newVal, oldVal){
+               if(newVal){
+       //            $(iElement).show();
+                   console.log(newVal);
+                   $('#myframe').attr('src', newVal);
+                 } 
+              else{
+         //        $(iElement).hide();
+                }
+          });
+      }
+   }
+  return p;
+}).directive("fileread", [function () {
+    return {
+        scope: {
+            fileread: "="
+        },
+        link: function (scope, element, attributes) {
+            element.bind("change", function (changeEvent) {
+                var reader = new FileReader();
+
+                reader.onload = function (loadEvent) {
+                    scope.$apply(function () {
+                        var f = loadEvent.target.result; 
+                        
+                        if (f.substr(0,1) == '{') {
+                            f = JSON.parse(f);
+                        }                     
+                        
+                        scope.fileread = f;
+                      
+                    });
+                }
+
+                if (attributes.filetype == 'json') {
+                    reader.readAsText(changeEvent.target.files[0]);
+                } else {
+
+                    var filesize = ((changeEvent.target.files[0].size/1024)/1024).toFixed(4)*1024; // KB
+
+                    if (filesize > 100) {
+                      alert("檔案超過100KB");                // limit: 100KB
+                    } else {
+                      reader.readAsDataURL(changeEvent.target.files[0]);                     
+                    }
+                  
+                  }
+                
+            });
+        }
+    }
+}]);
+
+  initData = new Object;
+  initData.feedback = new Object;
+  initData.public = 0;
+  initData.c = new Object;
+  initData.c.planNow = 0;
+  initData.c.pageNow = '自傳';
+  initData.c.supports = ['您'];
+  initData.c.share = [ {'自傳':false, '學習風格':false}, {'自傳':false, '學習風格':false}  ] ;
+
+  initData.c.dayTimes = ['清晨','早餐','早上','午餐','下午','晚餐','晚上','深夜'];
+  initData.c['清晨'] = "6:00~7:20";
+  initData.c['早餐'] = "7:30~8:00";
+  initData.c['早上'] = "8:10~9:30,9:40~11:30";
+  initData.c['午餐'] = "11:40~13:00";
+  initData.c['下午'] = "13:30~15:30,15:45~17:30";
+  initData.c['晚餐'] = "17:50~18:30";
+  initData.c['晚上'] = "18:50~20:00";
+  initData.c['深夜'] = "20:30~";
+
+  initData.c.goldTimes = [
+  {k:'清晨0', t:"6:00~7:20"},
+  {k:'早餐0', t:"7:30~8:00"},
+  {k:'早上0', t:"8:10~9:30", fs:2, fd:'auto'},
+  {k:'早上1', t:"9:40~11:30", fs:0, fd:'none'}];
+
+  initData.c.fontDT = 70;
+  initData.c.fontTT = 70;
+
+  
+  initData.t = new Array;
+      for (var inn = 0; inn < 2; inn++) {
+
+         initData.t[inn] = new Object;
+
+         initData.t[inn]['自傳'] = '小幫手：先照著你想到的去寫你的成長故事、自我介紹和對未來的期許\n\n再去對應到申請書上的問題';
+
+         initData.t[inn]['學習風格'] = '小幫手：現代的教育研究者發現，每個人擅長的學習方法都不同\n\n你最擅長怎樣的在學習情摬中，用什麼樣的學習節奏，和誰一起，學習新事物呢?';
+
+
+         initData.t[inn].callHelp = '小幫手：你不孤單。很多人都願意伸手，只要你懂得在需要時向對的人求助。';
+        
+        initData.t[inn].correlation = {
+            '健康與體育運動' : true,
+            '綜合活動生活自理' : true
+        };
+
+        initData.t[inn].schedule = {
+         '一清晨0':'運動',
+         '二清晨0':'運動',
+         '二清晨0':'運動',
+         '四清晨0':'運動',
+         '五清晨0':'運動',
+         '六清晨0':'彈性',
+         '日清晨0':'彈性',
+         '日午餐0':'生活自理',
+         '一午餐0':'生活自理',
+         '二午餐0':'生活自理',
+         '三午餐0':'生活自理',
+         '四午餐0':'生活自理',
+         '五午餐0':'生活自理',
+         '六午餐0':'生活自理',
+         '日下午0':'收集資訊',
+         '一下午0':'收集資訊',
+         '二下午0':'收集資訊',
+         '三下午0':'收集資訊',
+         '四下午0':'收集資訊',
+         '五下午0':'收集資訊',
+         '六下午0':'收集資訊',      
+         '一深夜0':'休息',
+         '二深夜0':'休息',
+         '三深夜0':'休息', 
+         '四深夜0':'休息',
+         '五深夜0':'休息',
+         '六深夜0':'休息',
+         '日深夜0':'休息', 
+        };
+
+        var dd = new Date;
+        initData.t[inn].shift = dd.getMonth() + 1;
+
+        initData.t[inn].goal = {};
+
+        initData.t[inn].checkGoal = {};
+
+        initData.t[inn].resources = {};
+
+        initData.t[inn]['主題'] = ['生活自理','運動','收集資訊'];
+        initData.t[inn].fields = [];
+        initData.t[inn].enable7F = true;
+        initData.t[inn].outCheck = true;
+        initData.t[inn].showFields = false;
+        initData.t[inn].timeline = [
+          0,0,0,0,0,0,0,0,0,0,0,0,0,
+          0,0,0,0,0,0,0,0,0,0,0,0,0,
+          0,0,0,0,0,0,0,0,0,0,0,0,0,
+          0,0,0,0,0,0,0,0,0,0,0,0,0,
+          0,0,0,0,0,0,0,0,0,0,0,0,0,
+          0,0,0,0,0,0,0,0,0,0,0,0,0,];
+      };
+
+  console.log(initData);
+
+  var Ctrl = function ($scope, $firebase) {
+
+  	setInterval(function(){
+  		$scope.now = new Date;
+  		$scope.clock = $scope.now.getTime();
+	}, 1000);
+
+
+  	$scope.confirm = window.confirm;
+    $scope.console = window.console;
+    $scope.Math = window.Math;
+  	$scope.$ = jQuery;
+    $scope.popURL = '';
+    $scope.help = new Object;
+    $scope.name = '您';
+    $scope.lock = true;
+    $scope.delay = 100; // 到期延後日
+    $scope.focusCol = new Object;
+
+
+
+    $scope.hintSupports = "t方面的老師?諮詢者?學習資源?同學?場地?" ;
+
+    $scope.sevenFields = ['語文-國文','語文-鄉土語文','語文-英文','健康與體育','社會','數學','自然與科技','藝術與人文','綜合活動'];
+
+    $scope.calanD = {
+	    //  w:[]
+    	m: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+    	y: ['今年','明年','後年','3年後','4年後','5年後','10年後','20年後']
+    };
+
+
+    $scope.supports = [
+    '全球化與自主學習(自傳,13分鐘_講座) http://www.youtube.com/embed/Mi7qkTyqimE',
+    '各縣市自學申請表(自傳,_正式申請用的表格是這份喔!) http://law.chen-wernik.net',
+
+    '學習風格自我測試(學習風格,7分鐘_自我探索) http://bestian.github.io/freemath/%E5%B7%A5%E5%85%B7%E8%BB%9F%E9%AB%94/styleTester.html',
+    '多元智能理論(學習風格,7分鐘_自我探索) http://zh.wikipedia.org/wiki/多元智能理論',
+
+    '七大領域的教學理念(學習主題與領域,3分鐘_瀏覽概要) http://163.24.138.110/jses/other/%E4%B8%83%E5%A4%A7%E9%A0%98%E5%9F%9F%E7%9A%84%E6%95%99%E5%AD%B8%E7%90%86%E5%BF%B5.html',
+
+    '如何訂學習計畫_上(學習主題與領域,10分鐘_講座) http://www.youtube.com/embed/SUoT5P8_UOI',
+    '如何訂學習計畫_中(學習主題與領域,10分鐘_講座) http://www.youtube.com/embed/2jF8Hu6aTCU',
+    '如何訂學習計畫_下(學習主題與領域,10分鐘_講座) http:www.youtube.com/embed/yeWB3BhQ7lg',
+    
+
+    '如何成為未來職場需要的自由人才_上(進度與目標,10分鐘_講座) http://www.youtube.com/embed/ZPzqw3x05-g',
+    '如何成為未來職場需要的自由人才_中(進度與目標,10分鐘_講座) http://www.youtube.com/embed/Yc-fHn5aevo',
+    '如何成為未來職場需要的自由人才_下(進度與目標,10分鐘_講座) http://www.youtube.com/embed/IqQTLQH-S_M',
+
+    '支持與資源分享(學習支持與資源,3分鐘_檢索) http://bestian.github.io/shackhand/list_printer.html',
+
+    '自學2.0互認地圖(希望支援,7分鐘_認識附近的朋友) http://bestian.github.io/shackhand/auto20',
+
+    '丙級技術師證照線上複習(希望支援,5分鐘_考古題) http://onlinetest.slhs.tp.edu.tw/test2/main/review_setup.asp?examid=testr',
+
+    '乙級技術師證照線上複習(希望支援,5分鐘_考古題) http://onlinetest2.slhs.tp.edu.tw',
+
+    '一萬小時定律試算機(一週節奏,3分鐘_試算) http://bestian.github.io/freemath/工具軟體/一萬小時定律.html',
+
+    ];
+
+      $scope.onlyTrue = function(obj,a) {
+        var keys =Object.keys(obj);
+        for (var i = 0; i < keys.length; i++) {
+          obj[keys[i]] = false;
+        };
+        obj[a] = true;
+        return obj;
+      }
+
+      $scope.clone = function(o) {
+   
+        var m = $.extend(true, {}, o);
+ //       console.log("Cloning this"); 
+   //     console.log(m);
+     //   console.log("well done"); 
+
+        return m;
+      }
+
+//      $scope.hint = $scope.clone(initData.t[0]);
+
+      $scope.hintData = $scope.clone(initData);
+
+      $scope.root = {};
+      $scope.root.data = $scope.clone(initData);
+
+      $scope.root.data.myName = '請輸入您的大名'
+
+    if(location.hash) {
+          console.log(location.hash.replace('#',''));
+      if (location.hash.indexOf('http') > -1) {
+        $.getJSON( location.hash.replace('#',''), function(data){          
+          console.log(data);
+          $scope.root = data;
+          $scope.$digest;
+        });
+      }
+      else {
+        $scope.root.data.myName = decodeURI(location.hash.replace('#',''));
+        $scope.name = decodeURI(location.hash.replace('#',''));
+      }
+    }
+
+      
+/*
+    $scope.download = function(name) {
+      window.open('https://shackhand-plan.firebaseio.com/'+name+'.json?print=pretty&format=export&download='+encodeURI(name+'的學習計畫')+'.json');
+    }*/
+
+    $scope.updateGold = function() {
+		 $scope.root.data.c.goldTimes = [];	
+		  for (var i = 0; i < initData.c.dayTimes.length; i++) {
+		  	var tt = $scope.root.data.c.dayTimes[i];
+		  	var tStr = $scope.root.data.c[tt];
+		    var ts = tStr.split(',');
+		    for (var k = 0; k < ts.length; k++) {
+		    	var s = (k == 0 && ts.length) || 0;
+		    	var d = (k > 0 && 'none') || 'auto';
+		    	$scope.root.data.c.goldTimes.push({
+		    		k: tt + k,
+		    		t: ts[k],
+		    		fs: s,
+		    		fd: d
+		    	});
+		    };    
+		  };
+    }
+
+    $scope.updateGold();
+
+
+    $scope.resetDraw = function (plan) {
+      $scope.root.data.t[plan].timeline = initData.t[0].timeline;
+      $scope.updated = false;
+
+    }
+
+    $scope.draw = function (ev,y,x,plan, colorNow) {
+
+      if (!colorNow) colorNow = false;
+
+      $scope.root.data.t[$scope.root.data.c.planNow].timeline[x] = y;
+
+   /*   if (!$scope.root.data.t[plan].timeline[y]) $scope.root.data.t[plan].timeline[y] = [true];
+
+//      var depth = ((x % 12 || x == 0 || x == 24) && 10) || 8;
+      var depth = 10;
+
+     
+      for (var i = 0; i < depth; i++) {      
+            $scope.root.data.t[$scope.root.data.c.planNow].timeline[i][x] = colorNow;        
+      } 
+
+      $scope.root.data.t[root.data.c.planNow].timeline[y][x] = !colorNow; */
+      $scope.updated = false; 
+    }
+
+    $scope.range = function (n) {
+      var ar = [];
+      for (var k = 0; k < n; k++) {
+          ar[k] = k;
+      }
+      return ar;
+    }
+
+    $scope.ys = $scope.range(10);
+    $scope.xs = $scope.range(72);
+
+
+    $scope.removeElem = function(list, elem) {
+       return list.filter(function(str){ return str.indexOf(elem) == -1})
+    }
+
+    $scope.adTPC = function(ev, fromI, toI){
+      if ((ev.keyCode && ev.keyCode != 13) || !$scope[fromI]) return;
+
+      var planNow = $scope.root.data.c.planNow;
+      if (!$scope.root.data.t[planNow][toI]) $scope.root.data.t[planNow][toI] = new Array;      
+      var item = $scope[fromI].split('///')[0];
+      var insert = $scope[fromI].split('///')[1];
+      if (typeof(insert) == 'undefined') {
+        $scope.root.data.t[planNow][toI].push(item);
+      } else {
+        $scope.root.data.t[planNow][toI].splice(insert, 0, item);
+      }
+      $scope[fromI] = '';
+    }
+
+/*
+    $scope.adFLD = function(ev) {
+      if ((ev.keyCode && ev.keyCode != 13) || !$scope.addField) return;
+      if (!$scope.root.data.t[$scope.root.data.c.planNow].fields) $scope.root.data.t[$scope.root.data.c.planNow].fields = new Array;
+
+      var item = $scope.addField.split('///')[0];
+      var insert = $scope.addField.split('///')[1];
+      if (typeof(insert) == 'undefined') insert = $scope.root.data.t[$scope.root.data.c.planNow].fields.length - 1;
+
+       $scope.root.data.t[$scope.root.data.c.planNow].fields.splice(insert, 0, item);
+
+      $scope.addField = '';  //
+    } */
+
+    $scope.count = function(table, set1, set2) {
+
+      var ans = set1.length;
+
+      function satis(elem) {
+        var a = false;
+        for (var i = 0; i < set2.length; i++) {
+          if (table[elem+set2[i]]) a = true;
+        };
+        return a;
+
+      }
+      for (var i = 0; i < set1.length; i++) {
+        if (satis(set1[i])) ans -= 1;
+      };
+
+      return ans;
+    }
+
+    $scope.quite = function() {
+      $("audio").each(function(){
+          this.pause(); // Stop playing
+          this.currentTime = 0; // Reset time
+      }); 
+    }
+
+     $scope.hintToNull = function(str) {
+      if (!str) return;
+      return str.substr(0,4) == '小幫手：' ?  ''  : str;
+    }
+
+    $scope.op = function(url) {
+      window.open(url);
+    }
+
+    $scope.askPublic = function() {
+            $scope.root.data.public = (confirm(
+               '公開: 公開分享給任何需要的人當參考\n\n'
+     //         +'不公開: 資料僅供研發團隊改進參考，不公開分享\n\n'
+              +'私人: 研發團隊也不會儲存您的資料') && 2) || 0;
+    }
+
+
+    $scope.maybeSave = function (event) {
+
+        if (event.ctrlKey || event.metaKey) {
+            switch (String.fromCharCode(event.which).toLowerCase()) {
+              case 's':
+                  event.preventDefault();
+                  console.log('ctrl-s');
+                  $scope.save();
+          //        $scope.updated = true;
+                  return;
+                  break;
+              case 'd':
+                  event.preventDefault();
+                  console.log('ctrl-d');
+                  if (confirm("捨棄本次更新?") && $scope.tube) $scope.overwrite();
+              case 'r':
+                  event.preventDefault();
+                  console.log('ctrl-r');
+                  if (confirm("清空資料，還原成範本?")) {
+                    $scope.root.data = initData;
+                    $scope.$digest();
+                  }
+              case 'l':
+                  event.preventDefault();
+                  console.log('ctrl-l');
+                  $('input#upload').trigger('click');
+            }
+        }
+
+        $scope.updated = false;
+    }
+
+    $scope.createPassword = function(name) {
+      var p1, p2;
+
+      while (!p1 || p1 != p2) {
+        p1 = prompt("歡迎" + name + "!!創建帳號，請設定一組密碼");
+        p2 = prompt("請再輸入一次密碼以確認");
+
+        if (!p1  || !p2) {
+          alert("已取消")
+          return;
+        }
+
+        if (p1 != p2) { alert("兩次密碼不同，請重新設定") } else { break }
+      }
+
+      alert("已成功設定密碼為"+p1+"!!\n請確實記下您的密碼，之後無法再查詢。");
+      return p1 && p2;
+    }
+
+    $scope.save = function (noAlert) {
+
+          console.log('saving');
+
+        if (!$scope.root.data.public) {
+          console.log('not Public');
+          if (!$scope.sentNews) {
+            newsAuto20('學習計畫編輯器');
+            $scope.sentNews = true;
+          }
+        } else {
+          var myURL = location.href.split('#')[0]+"#"+'https://shackhand-plan.firebaseio.com/' + encodeURI($scope.root.data.myName) + '.json';
+          console.log(myURL);
+          if (!$scope.sentNews) {
+            newsAuto20('學習計畫編輯器',$scope.root.data.myName,myURL);
+            $scope.sentNews = true;
+          }
+        }
+
+        if(!$scope.tube) {
+          if (!noAlert) alert("請按左上角的「儲存檔案」鈕");
+              var d = new Date;
+              console.log(d.getTime());
+              $scope.root.data.time = d.getTime();
+
+            if ($scope.root.data.public > 0) {
+      //        console.log($scope.root);
+              var ref = new Firebase('https://shackhand-plan.firebaseio.com/' + encodeURI($scope.root.data.myName));
+              $scope.base = $firebase(ref);
+              $scope.base.$set(angular.copy($scope.root));
+            } else {
+              var ref = new Firebase('https://shackhand-plan.firebaseio.com/' + encodeURI($scope.root.data.myName)+'/data/feedback');
+              $scope.base = $firebase(ref);
+              $scope.base.$set($scope.root.data.feedback);
+            }
+          return;
+        }
+
+      	if (!$scope.sandbox)  {
+        	if ($scope.root.password) {
+        		if ($scope.lock) {
+			          var trypass = prompt("請輸入密碼以儲存變更");
+			          if (trypass != $scope.root.password) {
+			            alert("密碼不符");
+			            return;
+			          }
+
+			          else {
+			          	if (confirm("通過驗證，已解鎖!!要改密碼嗎?")){
+			          		var newPass = $scope.createPassword($scope.currentName);
+				            if (newPass) {
+				              $scope.root.password = newPass;
+				            } 
+			          	}
+			          }
+		        }
+	        }
+
+	        else {
+	            var newPass = $scope.createPassword($scope.currentName);
+	            if (newPass) {
+	              $scope.root.password = newPass;
+	            } else {
+                $scope.base.$remove();
+	              return;
+	            }
+	        }
+  	  	}
+ 	
+	    var d = new Date;
+	    console.log(d.getTime());
+	    console.log($scope.root);
+
+	    $scope.root.data.time = d.getTime();
+	    $scope.base.$set($scope.root);
+	    $scope.updated = true;
+	    $scope.lock = false;
+      $scope.currentUser = $scope.currentName;
+    }
+
+
+      $scope.mayBePushDJ = function(ev,elem){
+        if (ev.keyCode != 13 || !elem) return;
+        $scope.root.data.c.dayTimes.push(elem);
+   //     $scope.$digest();
+      }
+
+    //NAME CHANGE
+      $scope.mayBeChName = function(ev, n, password){
+
+        if (ev.keyCode != 13 || !$scope.name) return;
+        $scope.chName(n,password);
+      }
+
+      $scope.chName = function(newValue,password) {  
+
+        console.log("I see a data change!" + newValue);
+
+        $scope.updated = false;
+        $scope.lock = true;
+        $scope.currentName = newValue;
+
+        $scope.sandbox = (/^(您|我|他|她)$/).test(newValue) ? true : false;
+
+        location.hash = '#' + encodeURI(newValue);
+
+        var ref = new Firebase('https://shackhand-plan.firebaseio.com/' + encodeURI(newValue));
+
+        $scope.base = $firebase(ref);
+        console.log($scope.base);
+        //
+
+        $scope.base.$on("loaded", function() {
+
+          console.log("File Loaded!!");
+
+          if (!$scope.binding) $scope.overwrite(newValue, password);
+
+        });
+
+        //
+
+        $scope.base.$on("change", function() {
+          
+          if (!$scope.binding) {
+            console.log("A remote change was applied locally!");
+            $scope.overwrite(newValue, password);
+
+          }
+          else {
+            console.log("binding");
+          }
+
+        });
+
+        $scope.name = '';       
+        $scope.password = '';     
+    }
+
+    $scope.updateInit = function(){
+      console.log('updating from Init');
+      var ks = Object.keys(initData.t[0]);
+    //  console.log(ks);
+
+      for (var i = 0; i < ks.length; i++) {
+        var k = ks[i];
+    //    console.log(k);
+        for (var j = 0; j < 2 ; j++) {
+     //       console.log(j);
+            if (typeof($scope.root.data.t[j]) == 'undefined') {
+              $scope.root.data.t[j] = new Object;
+              $scope.root.data.t[j] = $scope.clone(initData.t[j]);
+            }
+            if (typeof($scope.root.data.t[j][k]) == 'undefined') {
+              $scope.root.data.t[j][k] = $scope.clone(initData.t[j][k]);
+              console.log(k + ':updated 1 item:' + initData.t[j][k] + ' from Init');
+            }        
+        };
+      };
+
+      var cs = Object.keys(initData.c);
+
+      for (var i = 0; i < cs.length; i++) {
+        var k = cs[i];
+     //       console.log(j);
+            if (typeof($scope.root.data.c) == 'undefined') {
+              $scope.root.data.c = new Object;
+              $scope.root.data.c = $scope.clone(initData.c);
+            }
+            if (typeof($scope.root.data.c[k]) == 'undefined') {
+              $scope.root.data.c[k] = $scope.clone(initData.c[k]);
+              console.log(k + ':updated 1 item:' + initData.c[k] + ' from Init');
+            }     
+      };
+
+    }
+
+    $scope.overwrite = function(name,password) {  
+
+        console.log("Overwriting"); 
+
+        $scope.root.data = $scope.clone($scope.base.data);
+
+        try {
+          $scope.root.password = $scope.base.password + "";
+
+          if (!$scope.root.password.replace("undefined",'').replace("false",'')) {
+              $scope.root.password = false;
+          } else {  }
+
+        } catch (err) {
+          console.log(err);
+        }
+
+        // delete if outdated
+        var t = $scope.root.data.time;
+        var c = $scope.clock;
+        var p = $scope.delay;
+
+        console.log(timeToDay(ctt(t,p,c)));
+
+        if (!ctt(t,p,c) || ctt(t,p,c) < 0 ) {
+          $scope.root.data = $scope.clone(initData);
+          $scope.root.password = false;
+ //         alert("帳號超過"+p+"天未使用，已刪除。");
+        }
+
+        $scope.updateInit();
+
+        $scope.mirror = $scope.clone($scope.root);
+
+        clearInterval($scope.mirrowInterval);
+        $scope.mirrowInterval = setInterval( function(){
+          console.log("checking");
+          if ($scope.lock && !$scope.sandbox) {
+            $scope.root = $scope.clone($scope.mirror);
+            $scope.$digest;
+          }
+        },1000);
+
+        if($scope.root.password == password) {
+          $scope.currentUser = name;
+          $scope.lock = false;
+        }
+    }
+
+    $scope.bind3w = function() {
+
+              console.log("Begin Binding"); 
+              console.log($scope.base);  
+              console.log($scope.root);      
+                    
+      //        $scope.binding = true;
+      //        $scope.updated = true;
+
+              if (typeof($scope.root.data.t) == "undefined") {
+
+                    console.log("Initializing");
+
+                    $scope.base.$child("data").$set(initData);   // B
+
+                    $scope.root = new Object;
+                    $scope.root.data = $scope.clone(initData);   // M
+
+                    console.log($scope.root);
+                    console.log($scope.base);
+                }
+            
+
+         //     $scope.base.$bind($scope, "root");   Problem: TOO LEG!!
+              
+   /*
+              setInterval(function(){
+                  
+                  setTimeout(function(){
+
+                    console.log($scope.root);
+
+            //        $scope.base.$set($scope.root);
+
+                  }, 10 + Math.floor(Math.random()*10));
+
+              }, 1000);  */
+
+
+    }
+
+    
+
+};
+
+</script>
+
+</html>
