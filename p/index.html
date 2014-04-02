@@ -1,0 +1,254 @@
+
+<!DOCTYPE html>
+<html ng-app = "reporterApp">
+
+
+
+<script src="../javascripts/lib/jquery-1.10.2.js"></script>
+<script src="../javascripts/lib/jquery-ui.js"></script>
+<script src="../javascripts/lib/angular.min.js"></script>
+
+
+  <title>超簡單印表機</title>
+
+
+
+  <meta charset=utf-8 />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://g0v.github.io/reporter/p/index.html" />
+    <meta property="og:title" content="超簡單印表機" />
+    <meta property="og:image" content="" />
+
+  <meta name="description" content="超簡單印表機。">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+
+  <style type="text/css">
+
+
+  body {        /* A4 */
+    width: 208mm;
+    font-family: Apple LiGothic Medium, "Microsoft JhengHei",微軟正黑體,Arial,Tahoma,Century gothic,sans-serif;
+  }
+
+  table#main {
+    width: 90%;
+    border-collapse: collapse;
+  }
+
+  #main td {
+    width: 50%;
+    text-align: center;
+    vertical-align: top;
+  }
+
+  #main td#r {
+    text-align: left;
+    vertical-align: middle;
+    padding: 5mm;
+  }
+
+
+  img.face {
+    width: 100%;
+  }
+
+  img.qr {
+    width: 20mm;
+    float: left;
+  }
+
+  #rt {
+    font-size: 120%;
+  }
+
+  #titleBar {
+    display: inline-block;
+    width: 102%;
+    color: #fff;
+    text-align: center;
+    font-size: 300%;
+
+/*
+    -webkit-box-shadow: inset 0 0 0 1000px black, 0px 3mm 0px rgba(219,31,5,1);
+    -moz-box-shadow: inset 0 0 0 1000px black, 0px 3mm 0px rgba(219,31,5,1);
+    box-shadow: inset 0 0 0 1000px black, 0px 3mm 0px rgba(219,31,5,1);
+
+    padding-top: 6mm;
+    padding-bottom: 3.5mm;
+
+*/
+
+    margin-top: -1mm;
+    margin-left: -5.5px;
+
+    margin-bottom: 6mm;
+  }
+
+  #titleBar span {
+    position: relative;
+    z-index: 99;
+  }
+
+/*
+  #redBar {
+    display: inline-block;
+    width: 100%;
+    height: 2mm;
+    box-shadow: inset 0 0 0 1000px red;
+
+  } */
+
+  table#in td#left {
+    text-align: left;
+  }
+
+  table#in td#right {
+    font-size: 200%;
+    vertical-align: middle;
+  }
+
+  #foot {
+    font-size: 120%;
+    font-weight: bold;
+  }
+
+
+  a#doPrint {
+    position: fixed;
+    bottom: 20%;
+    left: 40%;
+    z-index: 31;
+    top: 50%;
+    left: 25%;
+    margin-top: -15%;
+    margin-left: -5%;
+    width: 50%;
+    height: 10%;
+    text-decoration: none;
+    color: rgba(255,255,255,0.5);
+    background-color: rgba(219,87,5,0.5);
+    font-family: 'Yanone Kaffeesatz';
+    font-weight: 700;
+    font-size: 200%;
+    line-height: 200%;
+    cursor: pointer;
+    display: block; 
+    padding: 5px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+    -webkit-box-shadow: 0px 9px 0px rgba(219,31,5,.5), 0px 9px 25px rgba(0,0,0,.4);
+    -moz-box-shadow: 0px 9px 0px rgba(219,31,5,.5), 0px 9px 25px rgba(0,0,0,.4);
+    box-shadow: 0px 9px 0px rgba(219,31,5,.5), 0px 9px 25px rgba(0,0,0,.4);
+
+    text-align: center;
+  
+  -webkit-transition: all .1s ease;
+  -moz-transition: all .1s ease;
+  -ms-transition: all .1s ease;
+  -o-transition: all .1s ease;
+  transition: all .1s ease;
+}
+
+a#doPrint:hover {
+    color: rgba(255,255,255,1);
+    background-color: rgba(219,87,5,1);
+    -webkit-box-shadow: 0px 9px 0px rgba(219,31,5,1), 0px 9px 25px rgba(0,0,0,.7);
+    -moz-box-shadow: 0px 9px 0px rgba(219,31,5,1), 0px 9px 25px rgba(0,0,0,.7);
+    box-shadow: 0px 9px 0px rgba(219,31,5,1), 0px 9px 25px rgba(0,0,0,.7);
+
+}
+
+a#doPrint:active {
+    -webkit-box-shadow: 0px 3px 0px rgba(219,31,5,1), 0px 3px 6px rgba(0,0,0,.9);
+    -moz-box-shadow: 0px 3px 0px rgba(219,31,5,1), 0px 3px 6px rgba(0,0,0,.9);
+    box-shadow: 0px 3px 0px rgba(219,31,5,1), 0px 3px 6px rgba(0,0,0,.9);
+}
+
+
+  </style>
+
+
+</head>
+
+<body  ng-controller = "Ctrl" >
+
+   
+  <textarea rows = "40" cols = "40"
+   ng-model = "text" ng-show = "edit" ng-init = "edit = true"
+   ng-focus = "text = (((text != placeholder) && text) || '') ">
+
+
+  </textarea>
+
+
+
+<a id = "doPrint" ng-show ="root.photo && root.name &&!editing" onclick = "$(this).hide(); window.print()"> 列印!  </a>
+
+
+
+</body>
+
+<script type="text/javascript">
+
+  var reporterApp = angular.module('reporterApp', []);
+
+  reporterApp.directive("fileread", [function () {
+    return {
+        scope: {
+            fileread: "="
+        },
+        link: function (scope, element, attributes) {
+            element.bind("change", function (changeEvent) {
+                var reader = new FileReader();
+
+                reader.onload = function (loadEvent) {
+                    scope.$apply(function () {
+                        var f = loadEvent.target.result; 
+                        
+                        if (f.substr(0,1) == '{') {
+                            f = JSON.parse(f);
+                        }                     
+                        
+                        scope.fileread = f;
+                      
+                    });
+                }
+
+                if (attributes.filetype == 'json') {
+                    reader.readAsText(changeEvent.target.files[0]);
+                } else {
+
+                    var filesize = ((changeEvent.target.files[0].size/1024)/1024).toFixed(4)*1024; // KB
+
+                //    if (filesize > 100) {
+                //      alert("檔案超過100KB");                // limit: 100KB
+                //    } else {
+                      reader.readAsDataURL(changeEvent.target.files[0]);                     
+                //    }
+                  
+                  }
+                
+            });
+        }
+    }
+}]);
+  
+  var Ctrl = function ($scope) {
+    $scope.root = {};
+
+    $scope.placeholder = "貼上您的報導\n\n*大標題\n\n**中標題\n\n內文\n內文";
+    $scope.text = "" + $scope.placeholder;
+
+
+    $scope.maybeDone = function(e){
+      if (e.keyCode == 13) $scope.editing = 0;
+    }
+  }
+
+
+</script>
+
+</html>
