@@ -2,16 +2,13 @@
 <!DOCTYPE html>
 <html ng-app = "reporterApp">
 
-
-
 <script src="../javascripts/lib/jquery-1.10.2.js"></script>
 <script src="../javascripts/lib/jquery-ui.js"></script>
 <script src="../javascripts/lib/angular.min.js"></script>
+  <script src="http://code.angularjs.org/1.2.5/angular-sanitize.min.js"></script>
 
 
-  <title>超簡單印表機</title>
-
-
+  <title>超簡單印報機--印出自己的公民記者報</title>
 
   <meta charset=utf-8 />
 
@@ -26,29 +23,25 @@
 
   <style type="text/css">
 
+  @media print {
+    div#custom.noPrint, div#custom.noPrint *{
+      display: none;
+    }
+  }
 
   body {        /* A4 */
     width: 208mm;
     font-family: Apple LiGothic Medium, "Microsoft JhengHei",微軟正黑體,Arial,Tahoma,Century gothic,sans-serif;
   }
 
-  table#main {
-    width: 90%;
-    border-collapse: collapse;
+  p {
+    margin-left: 12px;
+    text-indent:50px;
   }
 
-  #main td {
-    width: 50%;
-    text-align: center;
-    vertical-align: top;
+  h1 {
+    margin-left: 50px;
   }
-
-  #main td#r {
-    text-align: left;
-    vertical-align: middle;
-    padding: 5mm;
-  }
-
 
   img.face {
     width: 100%;
@@ -59,73 +52,25 @@
     float: left;
   }
 
-  #rt {
-    font-size: 120%;
+  div#custom {
+    display: block;
+    border: 3px black solid;
+    position: fixed;
+    top: 10%;
+    right: 10%;
+    width: 400px;
+    height: 400px;
   }
-
-  #titleBar {
-    display: inline-block;
-    width: 102%;
-    color: #fff;
-    text-align: center;
-    font-size: 300%;
-
-/*
-    -webkit-box-shadow: inset 0 0 0 1000px black, 0px 3mm 0px rgba(219,31,5,1);
-    -moz-box-shadow: inset 0 0 0 1000px black, 0px 3mm 0px rgba(219,31,5,1);
-    box-shadow: inset 0 0 0 1000px black, 0px 3mm 0px rgba(219,31,5,1);
-
-    padding-top: 6mm;
-    padding-bottom: 3.5mm;
-
-*/
-
-    margin-top: -1mm;
-    margin-left: -5.5px;
-
-    margin-bottom: 6mm;
-  }
-
-  #titleBar span {
-    position: relative;
-    z-index: 99;
-  }
-
-/*
-  #redBar {
-    display: inline-block;
-    width: 100%;
-    height: 2mm;
-    box-shadow: inset 0 0 0 1000px red;
-
-  } */
-
-  table#in td#left {
-    text-align: left;
-  }
-
-  table#in td#right {
-    font-size: 200%;
-    vertical-align: middle;
-  }
-
-  #foot {
-    font-size: 120%;
-    font-weight: bold;
+  #custom input,#custom button {    
+    font-size: 150%;
   }
 
 
   a#doPrint {
-    position: fixed;
-    bottom: 20%;
-    left: 40%;
-    z-index: 31;
-    top: 50%;
-    left: 25%;
-    margin-top: -15%;
-    margin-left: -5%;
+    position: absolute;
+    bottom: 10px;
     width: 50%;
-    height: 10%;
+    height: 20%;
     text-decoration: none;
     color: rgba(255,255,255,0.5);
     background-color: rgba(219,87,5,0.5);
@@ -133,6 +78,7 @@
     font-weight: 700;
     font-size: 200%;
     line-height: 200%;
+    vertical-align: middle;
     cursor: pointer;
     display: block; 
     padding: 5px;
@@ -173,19 +119,50 @@ a#doPrint:active {
 
 </head>
 
-<body  ng-controller = "Ctrl" >
-
+<body ng-controller = "Ctrl" >
    
-  <textarea rows = "40" cols = "40"
-   ng-model = "text" ng-show = "edit" ng-init = "edit = true"
-   ng-focus = "text = (((text != placeholder) && text) || '') ">
+   <h1 ng-mouseover = "editH1 = 1" ng-mouseout = "editH1 = 0">
+      <span ng-show = "!editH1" ng-bind = "h1" ng-init = "h1 = '大標題'"></span>
+      <input ng-show = "editH1" ng-model = "h1" ng-blur = "editH1 = 0"/ ng-keypress = "maybeDone($event)" />
+
+   </h1>
+
+   <div ng-repeat = "obj in ps">
+  
+    <div ng-mouseover = "obj.edit = 1" ng-mouseout = "obj.edit = 0">
+      <h2>
+       <span ng-bind = "h2D" ng-click = "$parent.ps.pop(); $digest()"></span>
+
+         <span ng-show = "!obj.edit" ng-bind = "obj.h2 || '中標題' "></span>
+         <input ng-show = "obj.edit" ng-model = "obj.h2" ng-blur = "editH1 = 0"/ ng-keypress = "maybeDone($event)">
+
+       <span ng-bind = "h2D" ng-click = "$parent.ps.push({})"></span>
+
+      </h2>
 
 
-  </textarea>
+        <p ng-show = "!obj.edit" ng-bind-html = "(obj.text || '內文內文內文內文內文內文內文') | noHTML | makeP | newlines "></p>
+        <textarea ng-show = "obj.edit" ng-model = "obj.text" ng-blur = "editH1 = 0"/ ></textarea>
+
+
+    </div>
+
+   </div>
+
+
+   <div id = "custom" class= "noPrint">
+
+    <input ng-model = "h2D" ng-init = "h2D = '✭'"/><hr>
+    <button ng-click = "ps.pop(); $digest()">減段落</button>
+    <button ng-click = "ps.push({})">加段落</button><br>
+
+    <a id = "doPrint" ng-show = "ps[0]" onclick = "$(this).hide(); window.print()"> 列印!  </a>
+
+   </div>
 
 
 
-<a id = "doPrint" ng-show ="root.photo && root.name &&!editing" onclick = "$(this).hide(); window.print()"> 列印!  </a>
+
 
 
 
@@ -193,7 +170,7 @@ a#doPrint:active {
 
 <script type="text/javascript">
 
-  var reporterApp = angular.module('reporterApp', []);
+  var reporterApp = angular.module('reporterApp', ['ngSanitize']);
 
   reporterApp.directive("fileread", [function () {
     return {
@@ -234,18 +211,33 @@ a#doPrint:active {
             });
         }
     }
-}]);
+}]).filter('newlines', function () {
+      return function(text) {
+        return text ? text.replace(/\n/g, '<br/>') : undefined;
+      }
+  }).filter('noHTML', function () {
+      return function(text) {
+          return text ? text
+              .replace(/&/g, '&amp;')
+                  .replace(/>/g, '&gt;')
+                  .replace(/</g, '&lt;') : undefined;
+      }
+  }).filter('makeP' ,function(){
+      return function(text) {
+        return text ? text.replace(/\n\n/g, '</p><p>') : undefined;
+      }
+  });
   
   var Ctrl = function ($scope) {
     $scope.root = {};
 
-    $scope.placeholder = "貼上您的報導\n\n*大標題\n\n**中標題\n\n內文\n內文";
-    $scope.text = "" + $scope.placeholder;
+    $scope.ps = [{},{},{},{}];
 
 
     $scope.maybeDone = function(e){
       if (e.keyCode == 13) $scope.editing = 0;
     }
+
   }
 
 
