@@ -23,6 +23,7 @@
   <meta name="description" content="貼。印。前。當一位良心的公民記者。">
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
+  <link rel="stylesheet" href = "stylesheets/bootstrap.css" />
 
   <style type="text/css">
 
@@ -173,7 +174,16 @@ a#doPrint:active {
 
 </head>
 
-<body  ng-controller = "Ctrl" >
+<body ng-controller = "Ctrl" >
+
+  <div class = "navbar navbar-inverse navbar-fixed-bottom noPrint" role="navigation">
+    <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class = "active"><a href = "https://g0v.hackpad.com/JqRmqeNceAT" target = "_blank">記者證的製作討論紀錄</a></li>
+            <li class = "active"><a href = "https://www.youtube.com/watch?v=MC2mP5xZE9Y" target = "_blank">解說短片</a></li>
+          </ul>
+        </div>
+  </div>
 
     <table id = "main" border = "3px">
 
@@ -193,7 +203,7 @@ a#doPrint:active {
       <table id ="in">
       <tr>
       <td id ="left">
-            <img class = "face" src = "{{root.photo}}" ng-show = "root.photo" ng-click = "root.photo = ''" />
+            <img class = "face" ng-src = "{{root.photo}}" ng-show = "root.photo" ng-click = "root.photo = ''" />
             <span ng-hide = "root.photo">
 
               <ol>
