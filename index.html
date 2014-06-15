@@ -169,6 +169,12 @@ a#doPrint:active {
 }
 
 
+input#photo {
+  height: 30px;
+  font-size: 120%;
+}
+
+
   </style>
 
 
@@ -207,12 +213,14 @@ a#doPrint:active {
             <span ng-hide = "root.photo">
 
               <ol>
-                <li>「貼」您的照片 
-                <li>「印」下您的公民記者證
+                <li>「貼」照片 
+                <li>「印」記者證
                 <li>「前」往現場
               </ol>
 
-              <input class="hidden" type="file" fileread="root.photo" accept="image/*" capture="camera" id="file-upload" />
+              <hr>
+                <span style ="font-size:22px;">請上傳一張照片：</span>
+              <input id = "photo" type="file" fileread="root.photo" accept="image/*" capture="camera" id="file-upload" />
 
             </span>
         </div>
