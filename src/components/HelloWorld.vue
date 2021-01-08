@@ -27,8 +27,8 @@
       <table id ="in">
         <tr>
           <td id ="left">
-                <img class = "face" ng-src = "{{root.photo}}" ng-show = "root.photo" ng-click = "root.photo = ''" />
-                <span ng-hide = "root.photo">
+                <img class = "face" :src = "root.photo" v-show = "root.photo" @click = "root.photo = ''" />
+                <span v-show = "!root.photo">
 
                   <ol>
                     <li>「貼」照片 
@@ -46,11 +46,11 @@
 
           <td id = "right">
 
-            <span ng-show = "root.name  && !editing" ng-bind = "root.name">
+            <span v-show = "root.name  && !editing"> {{ root.name}}
             </span>
 
-            <span ng-hide = "root.name && !editing">
-              請輸入您的名字：<input ng-model = "root.name" ng-focus = "editing = 1" ng-blur = "editing = 0"/ ng-keypress = "maybeDone($event)">
+            <span v-show = "!root.name || editing">
+              請輸入您的名字：<input v-model = "root.name" ng-focus = "editing = 1" @keypress = "maybeDone($event)">
             </span>
 
           </td>
@@ -84,7 +84,7 @@
       <br><br>
 
 
-        <a href = "http://www.judicial.gov.tw/constitutionalcourt/p03_01.asp?expno=689"><img class = "qr" src="http://chart.apis.google.com/chart?chs=200x200&amp;cht=qr&amp;chld=|1&amp;chl=http://www.judicial.gov.tw/constitutionalcourt/p03_01.asp?expno=689"></a>
+        <a href = "http://www.judicial.gov.tw/constitutionalcourt/p03_01.asp?expno=689"><img class = "qr" src="http://chart.apis.google.com/chart?chs=200x200&amp;cht=qr&amp;chld=|1&amp;chl=http://www.judicial.gov.tw/constitutionalcourt/p03_01.asp?expno=689" target="_blank" rel="noopener noreferrer"></a>
 
         大法官解釋全文<br>
         http://goo.gl/Rd1hXR
@@ -100,6 +100,18 @@ export default {
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  data () {
+    editing: 1,
+    root: {
+      photo: '',
+      name: ''
+    }
+  },
+  methods: {
+    maybeDone (e) {
+      if (e.keyCode == 13) this.editing = 0;
+    }
   }
 }
 </script>
