@@ -77,7 +77,7 @@
 
           <br><br>
               <a href = "http://www.judicial.gov.tw/constitutionalcourt/p03_01.asp?expno=689">
-              <img class = "qr" src="http://chart.apis.google.com/chart?chs=200x200&amp;cht=qr&amp;chld=|1&amp;chl=http://www.judicial.gov.tw/constitutionalcourt/p03_01.asp?expno=689" target="_blank" rel="noopener noreferrer" alt="qr"></a>
+              <img class = "qr" src="https://chart.apis.google.com/chart?chs=200x200&amp;cht=qr&amp;chld=|1&amp;chl=http://www.judicial.gov.tw/constitutionalcourt/p03_01.asp?expno=689" target="_blank" rel="noopener noreferrer" alt="qr"></a>
 
               <br>
 
@@ -137,6 +137,10 @@ table#main tr td {
   border: none;
 }
 
+ol, li {
+  list-style-type: decimal !important;
+}
+
 table {
   border: none;
   border-collapse: collapse;
@@ -149,10 +153,7 @@ td#r {
 h3 {
   margin: 40px 0 0;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
-}
+
 li {
   display: inline-block;
   margin: 0 10px;
