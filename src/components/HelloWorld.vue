@@ -16,7 +16,7 @@
         <td>
           <div id = "titleBar">
     <!--        <span>記者證</span>  -->
-            <span><img src="https://g0v.github.io/reporter/images/r2.png"></span>
+            <span><img src="https://g0v.github.io/reporter/images/r2.png" alt="logo"></span>
           </div>
         </td>
         <td>
@@ -30,7 +30,9 @@
           <table id ="in">
             <tr>
               <td id ="left">
-                    <img class = "face" :src = "root.photo" v-show = "root.photo" @click = "root.photo = ''" />
+                    
+                    <img class = "face" :src = "root.photo" v-show = "root.photo" @click = "root.photo = ''" alt="face"/>
+
                     <span v-show = "!root.photo">
 
                       <ol>
@@ -75,7 +77,7 @@
 
           <br><br>
               <a href = "http://www.judicial.gov.tw/constitutionalcourt/p03_01.asp?expno=689">
-              <img class = "qr" src="http://chart.apis.google.com/chart?chs=200x200&amp;cht=qr&amp;chld=|1&amp;chl=http://www.judicial.gov.tw/constitutionalcourt/p03_01.asp?expno=689" target="_blank" rel="noopener noreferrer"></a>
+              <img class = "qr" src="http://chart.apis.google.com/chart?chs=200x200&amp;cht=qr&amp;chld=|1&amp;chl=http://www.judicial.gov.tw/constitutionalcourt/p03_01.asp?expno=689" target="_blank" rel="noopener noreferrer" alt="qr"></a>
 
               <br>
 
