@@ -54,7 +54,7 @@
                 <span id="name" v-show = "root.name  && !editing"> {{ root.name}}
                 </span>
                 <span v-show = "!root.name || editing">
-                  請輸入您的名字：<input v-model = "root.name" ng-focus = "editing = 1" @keypress = "maybeDone($event)">
+                  請輸入您的名字：<input v-model = "root.name" @focus = "editing = 1" @keypress = "maybeDone($event)">
                 </span>
 
               </td>
