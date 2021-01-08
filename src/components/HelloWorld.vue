@@ -16,7 +16,7 @@
         <td>
           <div id = "titleBar">
     <!--        <span>記者證</span>  -->
-            <span><img src="/images/r2.png"></span>
+            <span><img src="https://g0v.github.io/reporter/images/r2.png"></span>
           </div>
         </td>
         <td>
