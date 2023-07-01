@@ -76,13 +76,13 @@
           新聞自由所保障之新聞採訪自由並非僅保障隸屬於新聞機構之新聞記者之採訪行為，亦保障一般人為提供具新聞價值之資訊於眾，或為促進公共事務討論以監督政府，而從事之新聞採訪行為。
 
           <br><br>
-              <a href = "http://www.judicial.gov.tw/constitutionalcourt/p03_01.asp?expno=689">
-              <img class = "qr" src="https://chart.apis.google.com/chart?chs=200x200&amp;cht=qr&amp;chld=|1&amp;chl=http://www.judicial.gov.tw/constitutionalcourt/p03_01.asp?expno=689" target="_blank" rel="noopener noreferrer" alt="qr"></a>
+              <a href = "https://cons.judicial.gov.tw/docdata.aspx?fid=100&id=310870&rn=20084">
+              <img class = "qr" src="https://chart.apis.google.com/chart?chs=200x200&amp;cht=qr&amp;chld=|1&amp;chl=https://cons.judicial.gov.tw/docdata.aspx?fid=100%26id=310870%26rn=20084" target="_blank" rel="noopener noreferrer" alt="qr"></a>
 
               <br>
 
               大法官解釋全文<br>
-              http://goo.gl/Rd1hXR
+              https://bit.ly/3XvyaOx
         </td>
       </tr>
     </table>
