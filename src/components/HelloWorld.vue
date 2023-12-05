@@ -82,7 +82,7 @@
               <br>
 
               大法官解釋全文<br>
-              https://bit.ly/3XvyaOx
+              https://gov.tw/KKt
         </td>
       </tr>
     </table>
