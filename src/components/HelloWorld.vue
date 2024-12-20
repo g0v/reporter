@@ -1,20 +1,30 @@
 <template>
   <div class="hello">
     <div class = "navbar navbar-inverse navbar-fixed-bottom noPrint" role="navigation">
-      <div class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
-              <li>
-                <a href= "https://github.com/g0v/reporter/wiki/%E9%9A%B1%E7%A7%81%E6%AC%8A%E6%94%BF%E7%AD%96" target = "_blank" rel="noopener noreferrer">
-                  隱私政策
-                </a>
-              </li>
-              <li>
-                <a href = "https://github.com/g0v/reporter" target = "_blank" rel="noopener noreferrer">
-                  專案原始碼
-                </a>
-              </li>
-            </ul>
-        </div>
+      <div class="navbar-container">
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a href="https://www.facebook.com/sharer/sharer.php?u=https://g0v.github.io/reporter/#/" target="_blank" rel="noopener noreferrer">
+              分享到 Facebook
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="https://line.me/R/msg/text/?https://g0v.github.io/reporter/#/" target="_blank" rel="noopener noreferrer">
+              分享到 Line
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="https://github.com/g0v/reporter/wiki/%E9%9A%B1%E7%A7%81%E6%AC%8A%E6%94%BF%E7%AD%96" target="_blank" rel="noopener noreferrer">
+              隱私政策
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="https://github.com/g0v/reporter" target="_blank" rel="noopener noreferrer">
+              專案原始碼
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <table id = "main" border = "3px">
@@ -181,10 +191,57 @@ a {
   left: 0;
   right: 0;
   background-color: white;
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+  padding: 10px 0;
+}
+
+.navbar-container {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.nav-item {
+  margin: 5px;
+}
+
+.nav-item a {
+  color: #42b983;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  background-color: rgba(66, 185, 131, 0.1);
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.nav-item a:hover {
+  background-color: rgba(66, 185, 131, 0.2);
+}
+
+@media (max-width: 768px) {
+  .nav-list {
+    gap: 8px;
+  }
+  
+  .nav-item a {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
 }
 
 .face {
-  width: 300px;
+  width: 200px;
+  border-radius: 15px;
 }
 
 #name {
