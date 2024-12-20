@@ -1,0 +1,20 @@
+{
+  "repo" :"g0v/reporter",
+  "author" : "bestian",
+  "status" : "",
+  "name": "reporter",
+  "name_zh": "reporter - 公民記者證產生器",
+  "description": "reporter",
+  "description_zh": "reporter - 公民記者證產生器",
+  "homepage" : "",
+  "thumbnail" : "",
+  "document": "",
+  "repository": "https://github.com/g0v/reporter",
+  "licenses": [],
+  "keywords": [],
+  "audience": [],
+  "products" :[],
+  "partOf": "",
+  "contributors" :[],
+  "needs" : []
+}
