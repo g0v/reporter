@@ -3,9 +3,15 @@
     <div class = "navbar navbar-inverse navbar-fixed-bottom noPrint" role="navigation">
       <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-              <li><a href = "https://g0v.hackpad.com/JqRmqeNceAT" target = "_blank" rel="noopener noreferrer">討論紀錄</a></li>
               <li>
-                <a href="https://github.com/g0v/reporter"  target = "_blank" rel="noopener noreferrer">code on Github</a>
+                <a href= "https://github.com/g0v/reporter/wiki/%E9%9A%B1%E7%A7%81%E6%AC%8A%E6%94%BF%E7%AD%96" target = "_blank" rel="noopener noreferrer">
+                  隱私政策
+                </a>
+              </li>
+              <li>
+                <a href = "https://github.com/g0v/reporter" target = "_blank" rel="noopener noreferrer">
+                  專案原始碼
+                </a>
               </li>
             </ul>
         </div>
@@ -33,20 +39,27 @@
                     
                     <img class = "face" :src = "root.photo" v-show = "root.photo" @click = "root.photo = ''" alt="face"/>
 
+                    <h2 v-show = "!root.photo">每位公民都有新聞採訪權</h2>
                     <span v-show = "!root.photo">
 
                       <ol>
                         <li>「貼」照片</li>
                         <li>「印」記者證</li>
-                        <li>「前」往現場</li>
+                        <li>「前」往現場採訪</li>
                       </ol>
+
+                      <span class = "note left-align">
+                        記者證是公民新聞採訪權的保障。
+                        <br>
+                        上傳照片、輸入名字後，即可列印，請妥善保存，並在採訪時隨身攜帶。
+                      </span>
 
                       <hr>
                         <span style ="font-size:22px;">請上傳一張照片：</span>
                         
                           <image-uploader @input="setImage"></image-uploader>
 
-                      </span>
+                    </span>
               </td>
             </tr>
             <tr>
@@ -77,8 +90,8 @@
 
           <br><br>
               <a href = "https://cons.judicial.gov.tw/docdata.aspx?fid=100&id=310870&rn=20084">
-              <img class = "qr" src="https://chart.apis.google.com/chart?chs=200x200&amp;cht=qr&amp;chld=|1&amp;chl=https://cons.judicial.gov.tw/docdata.aspx?fid=100%26id=310870%26rn=20084" target="_blank" rel="noopener noreferrer" alt="qr"></a>
-
+                <img class = "qr" src="../assets/qr-code.png" alt="qr"/>
+              </a>
               <br>
 
               大法官解釋全文<br>
@@ -189,6 +202,11 @@ a {
   background-color: rgba(0,255,0,0.6);
   font-size: 48px;
   color: black;
+}
+
+.qr {
+  width: 180px;
+  height: 180px;
 }
 
 </style>

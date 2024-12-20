@@ -37,4 +37,15 @@ a {
   cursor: pointer;
 }
 
+input {
+  font-size: 22px;
+  margin: 10px;
+}
+
+.left-align {
+  display: block;
+  text-align: left !important;
+  padding-left: 10px;
+}
+
 </style>
