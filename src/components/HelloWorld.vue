@@ -152,6 +152,7 @@ table#main {
 
 input {
   font-size: 22px;
+  margin-left: 0;
 }
 
 table#main tr td {
@@ -166,6 +167,13 @@ ol, li {
 table {
   border: none;
   border-collapse: collapse;
+}
+
+#titleBar {
+  width: fit-content;
+  position: relative;
+  left: -2px;
+  top: -2px;
 }
 
 td#r {
@@ -271,6 +279,7 @@ a {
   input {
     border: none;
     text-align: center;
+    font-size: 26px !important;
   }
 }
 
