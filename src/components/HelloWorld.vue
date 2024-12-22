@@ -74,10 +74,9 @@
             </tr>
             <tr>
               <td id = "right">
-                <span id="name" v-show = "root.name  && !editing"> {{ root.name}}
-                </span>
-                <span v-show = "!root.name || editing" class = "noPrint">
-                  請輸入您的名字：<input v-model = "root.name" @focus = "editing = 1" @keypress = "maybeDone($event)">
+                <span>
+                  <span class = "noPrint">請輸入您的名字：</span>
+                  <input v-model = "root.name" @focus = "editing = 1" @keypress = "maybeDone($event)">
                 </span>
 
               </td>
@@ -269,6 +268,10 @@ a {
 }
 
 @media print {
+  input {
+    border: none;
+    text-align: center;
+  }
 }
 
 </style>
