@@ -1,5 +1,7 @@
 <template>
   <div class="hello">
+    <div class="privacy-notice noPrint">本站不收集個資，但還是提醒您：為保護個資安全，請先斷開網路再貼照片和輸入真實姓名</div>
+    
     <div class = "navbar navbar-inverse navbar-fixed-bottom noPrint" role="navigation">
       <div class="navbar-container">
         <ul class="nav-list">
@@ -281,6 +283,17 @@ a {
     text-align: center;
     font-size: 26px !important;
   }
+}
+
+.privacy-notice {
+  background-color: #ffffcc;
+  color: #555;
+  padding: 8px 15px;
+  text-align: center;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  border: 1px solid #eed;
 }
 
 </style>
